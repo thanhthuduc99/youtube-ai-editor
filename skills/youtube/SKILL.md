@@ -108,6 +108,8 @@ Phần còn lại giữ nguyên:
 - Đoạn mặt người nói dùng các template `th-*`.
 - **Chất liệu phải thật.**
 
+User muốn style RoboNuggets ("edit long 2"), hoặc video chỉ có mặt: làm thêm trang demo theo `edit-long-2/SKILL.md` để duyệt. 2 bộ hiệu ứng dùng chung được trong 1 video, xem mục "Dùng chung với edit-long" của `edit-long-2`.
+
 **Làm mượt jump cut** (luật của user), sau khi viết xong plan:
 ```bash
 PYTHONUTF8=1 python cut/scripts/jump_fx.py

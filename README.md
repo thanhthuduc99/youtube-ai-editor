@@ -1,6 +1,6 @@
 # youtube-ai-editor
 
-Bộ 2 skill cho Claude Code (dùng được cả Codex): dán đường dẫn video quay thô, AI tự cắt vấp, chèn B-roll và motion graphics, tạo thumbnail có mặt thật, viết title và description, rồi up lên YouTube. Bạn chỉ duyệt 1 lần trước khi render.
+Bộ 3 skill cho Claude Code (dùng được cả Codex): dán đường dẫn video quay thô, AI tự cắt vấp, chèn B-roll và motion graphics, tạo thumbnail có mặt thật, viết title và description, rồi up lên YouTube. Bạn chỉ duyệt 1 lần trước khi render.
 
 ![4 khung hình từ video đã edit bằng skill này: chữ cạnh mặt, intro 3 video AI chạy cạnh nhau, chapter card, slide chi phí](docs/media/showcase.jpg)
 
@@ -23,6 +23,17 @@ Khung hình trên lấy từ video [Trải nghiệm làm video AI với Claude C
 - **Up YouTube** ở chế độ private kèm thumbnail và description, sửa description sau khi up.
 
 ![3 mẫu thumbnail tạo cho 1 video, kèm bản cỡ điện thoại](docs/media/thumbnails-3-mau.jpg)
+
+## Style 2: edit-long-2 (mới)
+
+Cho video chỉ có mặt người nói. Học cách edit của kênh RoboNuggets, đổi sang màu brand Contentta: nền ivory, quầng pastel, nhấn tím plum, chữ Bricolage + Lora nghiêng.
+
+![6 hiệu ứng của edit-long-2: mặt thu vào khung bo cạnh 4 thẻ công đoạn, lưới icon sáng theo lời, giao diện Claude dựng lại, công tắc tự đăng YouTube, sơ đồ lệnh lúc quay, giả lập quay màn hình Claude desktop](docs/media/edit-long-2.jpg)
+
+- **50 hiệu ứng** của video gốc: mặt thu vào khung bo đổi bên, slide sơ đồ nét mảnh, lưới icon sáng đúng chữ đang nói, chat Claude có chữ gõ dần và tool call, thẻ "Bạn nên biết", logo bật quanh mặt, trang web thật có zoom, công tắc gạt.
+- **Giả lập quay màn hình Claude desktop.** Bạn kể "mở Claude, chọn folder, dán link, prompt..." mà quên quay màn hình: skill dựng lại màn hình Windows, app Claude tab Code (đo theo ảnh chụp thật), Chrome, File Explorer, có con trỏ, gõ phím, zoom theo từng câu nói.
+- **Duyệt trên 1 trang HTML.** Mỗi hiệu ứng chạy trên 1 đoạn thật của video bạn, có tiếng, mở qua `serve.py`.
+- Hướng tới dùng chung với `edit-long` trong 1 video: đoạn mặt người nói dùng hiệu ứng style 2, đoạn quay màn hình và slide dùng edit-long. Builder render `rn-*` cho video final chưa có, hiện style 2 mới ở bước demo duyệt.
 
 ## Cần chuẩn bị gì
 
@@ -52,19 +63,19 @@ Cách nhanh: dán prompt này vào Claude Code hoặc Codex.
 ```text
 Cài 2 skill trong repo https://github.com/thanhthuduc99/youtube-ai-editor:
 1. Clone repo về thư mục tạm.
-2. Chép skills/youtube và skills/edit-long vào thư mục skill của mình (Claude Code: ~/.claude/skills/, Codex: ~/.codex/skills/).
+2. Chép skills/youtube, skills/edit-long và skills/edit-long-2 vào thư mục skill của mình (Claude Code: ~/.claude/skills/, Codex: ~/.codex/skills/).
 3. Kiểm tra python, ffmpeg, node, rồi cài các package Python trong mục "Cần chuẩn bị gì" của README.
 4. Chạy python template/scripts/setup_assets.py trong skill edit-long để tải font, GSAP, Three.js.
 5. Báo lại mình còn thiếu gì.
 ```
 
-Dùng Codex thì thêm câu "Đọc skills/youtube/SKILL.md và skills/edit-long/SKILL.md trước khi làm".
+Dùng Codex thì thêm câu "Đọc skills/youtube/SKILL.md, skills/edit-long/SKILL.md và skills/edit-long-2/SKILL.md trước khi làm".
 
 Cài tay:
 
 ```bash
 git clone https://github.com/thanhthuduc99/youtube-ai-editor
-cp -r youtube-ai-editor/skills/youtube youtube-ai-editor/skills/edit-long ~/.claude/skills/
+cp -r youtube-ai-editor/skills/youtube youtube-ai-editor/skills/edit-long youtube-ai-editor/skills/edit-long-2 ~/.claude/skills/
 ```
 
 Phần bạn tự làm: login Codex CLI bằng tài khoản ChatGPT, tạo OAuth client trên Google Cloud và lấy refresh token cho YouTube.
@@ -96,11 +107,13 @@ Up YouTube cần 3 biến `YOUTUBE_OAUTH_REFRESH_TOKEN`, `YOUTUBE_OAUTH_CLIENT_I
 skills/
   youtube/      cắt vấp (template/cut), thumbnail (template/thumbnail), upload, quy trình 1 điểm dừng
   edit-long/    B-roll + motion graphics: builder overlay, ảnh mẫu, render, QA
+  edit-long-2/  style RoboNuggets màu Contentta: trang demo 50 hiệu ứng, giả lập quay màn hình Claude
 ```
 
 ## Ghi chú
 
 - Ảnh tham khảo của kênh Ben AI và Liam Ottley (khung hình, thumbnail) không đưa lên repo vì thuộc kênh khác. Tải lại bằng `skills/edit-long/tools/ref_frames.py`, hoặc skill [thumbnail-reverse](https://github.com/thanhthuduc99/thumbnail-reverse) cho thumbnail.
+- Ảnh chụp video RoboNuggets dùng để phân tích style edit-long-2 cũng không đưa lên. Bảng phân tích nằm trong `skills/edit-long-2/references/style.md`.
 - Hiệu ứng film burn không kèm theo vì không rõ quyền phát lại. Muốn dùng thì tải pack free rồi đặt vào `edit-long/template/assets/transitions/`.
 - File ví dụ trong `references/` dùng đường dẫn mẫu `C:/work/youtube/...`, thay bằng đường dẫn của bạn.
 - Luật trong `SKILL.md` ghi theo gu edit của tác giả (chữ giữa dưới, không zoom, chất liệu thật). Sửa trong `references/style.md` cho hợp kênh của bạn.

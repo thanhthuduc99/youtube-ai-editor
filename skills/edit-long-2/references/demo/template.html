@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit Long 2 demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,600&display=swap">
+<style>
+@font-face{font-family:Disp;src:url(fonts/display.ttf)}
+@font-face{font-family:Body;src:url(fonts/body.ttf)}
+@font-face{font-family:Body;src:url(fonts/body-bold.ttf);font-weight:700}
+@font-face{font-family:Mono;src:url(fonts/mono.ttf)}
+:root{--ivory:#FAF6EF;--ivory-deep:#F3ECE0;--paper:#fff;--ink:#17130D;--ink-soft:#4A4339;--ink-muted:#8A8073;--ink-faint:#BDB4A6;
+  --line:rgba(23,19,13,.09);--line-strong:rgba(23,19,13,.16);--lav:#B7A8FF;--peach:#FFB39C;--sky:#9AD0FF;--sage:#A9E0C2;--gold:#E6B45A;
+  --plum:#4A3AE0;--plum2:#7B6CFF;--serif:Lora,Georgia,serif;
+  --shadow:0 1px 0 rgba(255,255,255,.9) inset,0 2px 4px rgba(23,19,13,.04),0 18px 40px -18px rgba(23,19,13,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--ivory);color:var(--ink);font-family:Body,system-ui,sans-serif;padding:48px 24px 120px}
+header,.scene{max-width:1180px;margin:0 auto}
+header h1{font-family:Disp;font-size:56px;letter-spacing:-.04em;line-height:1}
+header h1 em,.cap h3 em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--plum);letter-spacing:-.01em}
+header p{color:var(--ink-soft);font-size:17px;line-height:1.65;margin-top:14px;max-width:820px}
+.scene{margin-top:56px}
+.cap{display:flex;gap:16px;align-items:baseline;margin-bottom:12px;flex-wrap:wrap}
+.cap .no{font-family:Mono;font-size:13px;color:var(--plum);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.cap h3{font-family:Disp;font-size:28px;letter-spacing:-.03em}
+.cap p{flex-basis:100%;color:var(--ink-soft);font-size:15px;line-height:1.6}
+.frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);cursor:pointer;background:#000}
+.ctrl{display:flex;align-items:center;gap:12px;margin-top:10px}
+.ctrl button{font:600 14px Body;border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:8px 18px;cursor:pointer;color:var(--ink)}
+.ctrl button.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.ctrl input{flex:1;accent-color:var(--plum)}
+.ctrl span{font:13px Mono;color:var(--ink-muted);min-width:90px;text-align:right}
+
+/* ---- 1920x1080 stage ---- */
+.stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:var(--ivory);font-family:Body;color:var(--ink)}
+.stage *{position:absolute}
+.stage .flow{position:static}
+.bg{inset:0;overflow:hidden}
+.orb{border-radius:50%;filter:blur(90px);opacity:.55}
+.dots{inset:0;background-image:radial-gradient(rgba(23,19,13,.16) 1.6px,transparent 1.8px);background-size:16px 16px;
+  -webkit-mask-image:linear-gradient(172deg,transparent 52%,#000 66%,#000 74%,transparent 88%);opacity:.6}
+.face{left:0;top:0;width:1920px;height:1080px;overflow:hidden;z-index:20;box-shadow:0 0 0 5px rgba(255,255,255,.95),0 40px 70px -24px rgba(23,19,13,.45);background:var(--ivory-deep)}
+.face video{left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;object-fit:cover}
+.ttl{text-align:center;white-space:nowrap}
+.ttl h2{position:static;font-family:Disp;font-size:66px;letter-spacing:-.04em;line-height:1.05;font-weight:800}
+.ttl h2 em,.em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--plum);letter-spacing:-.01em}
+.ttl p{position:static;font-size:28px;color:var(--ink-soft);margin-top:12px}
+.paper{background:var(--paper);border:1.5px solid var(--line-strong);border-radius:28px;box-shadow:var(--shadow)}
+.lbl{font-family:Disp;font-size:30px;letter-spacing:-.02em;white-space:nowrap}
+.sub{font-size:20px;color:var(--ink-muted);white-space:nowrap}
+.badge{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 6px 16px -6px rgba(23,19,13,.4)}
+.stage svg{position:static;display:block}
+.stage svg:not(.ic){width:100%;height:100%}
+.stage .ch{position:relative}
+.stage em,.stage b,.stage p span,.stage h2 span,.stage div > span.em{position:relative}
+.logo svg{position:static;width:100%;height:100%}
+.ch{display:inline-block;position:relative}
+</style>
+</head>
+<body>
+<header>
+  <h1>Edit Long 2: <em>demo</em> hiệu ứng</h1>
+  <p>Đủ bộ hiệu ứng của video RoboNuggets "9 NEW Claude Mods" (Jay E, 12:47): quét 3 giây 1 khung, gom được khoảng 55 hiệu ứng, gộp cái trùng khuôn còn <b>50 cảnh</b> dưới đây. Mỗi cảnh ghi giờ gốc trong video RN để đối chiếu. Màu đổi sang brand Contentta: nền ivory, quầng pastel, nhấn plum, chữ Bricolage + Lora nghiêng. Mỗi cảnh chạy trên 1 đoạn thật của video Hệ thống YouTube AI. Bấm vào khung để phát có tiếng.</p>
+</header>
+<p style="max-width:1180px;margin:18px auto 0;font-size:16px"><a href="sim.html" style="font-weight:700;color:var(--plum)">Mở trang giả lập quay màn hình Claude (10:29 → hết video) →</a></p>
+<nav id="nav" style="max-width:1180px;margin:28px auto 0;display:flex;flex-wrap:wrap;gap:8px"></nav>
+<main id="list"></main>
+
+<script src="gsap.min.js"></script>
+<script>
+const FACES = {{FACES}};  // per clip [x, y, h] of the face box in the 1920x1080 source (faces.json, OpenCV)
+let FACE = [985, 580, 465];
+const FULL = {box: {left: 0, top: 0, width: 1920, height: 1080, borderRadius: 0}, vid: {x: 0, y: 0, scale: 1}};
+function card(cx, cy, w, h) {  // shrink the video so the whole head (hair to chin ~1.45 face boxes) fills ~78% of the card
+  const [fx, fy, fh] = FACE, s = h*.78/(fh*1.45), hx = fx, hy = fy - .12*fh;
+  return {box: {left: cx - w/2, top: cy - h/2, width: w, height: h, borderRadius: Math.round(Math.min(w, h)*.3)},
+          vid: {x: w/2 - hx*s, y: h/2 - hy*s, scale: s}};
+}
+const CARD = {get L() { return card(480, 590, 540, 580); }, get R() { return card(1450, 600, 520, 580); }, get BL() { return card(195, 895, 260, 280); }};
+function move(tl, f, v, to, t, d = .55) {  // face full <-> squircle: shrink + round + blur on the way, sharp on landing
+  tl.to(f, {...to.box, duration: d, ease: 'power3.inOut'}, t);
+  tl.to(v, {...to.vid, duration: d, ease: 'power3.inOut'}, t);
+  tl.to(f, {filter: 'blur(18px)', duration: d*.45, ease: 'power2.in'}, t);
+  tl.to(f, {filter: 'blur(0px)', duration: d*.55, ease: 'power2.out'}, t + d*.45);
+}
+const rise = (tl, el, t, y = 26) => tl.fromTo(el, {opacity: 0, y, filter: 'blur(8px)'}, {opacity: 1, y: 0, filter: 'blur(0px)', duration: .55, ease: 'expo.out'}, t);
+const pop = (tl, el, t, s = .6) => tl.fromTo(el, {opacity: 0, scale: s}, {opacity: 1, scale: 1, duration: .45, ease: 'back.out(1.8)'}, t);
+const BG = `<div class="bg"><div class="orb" style="left:-160px;top:-200px;width:760px;height:760px;background:var(--lav)"></div>
+  <div class="orb" style="right:-220px;top:120px;width:700px;height:700px;background:var(--peach);opacity:.42"></div>
+  <div class="orb" style="left:520px;bottom:-380px;width:820px;height:640px;background:var(--sky);opacity:.38"></div><div class="dots"></div></div>`;
+const title = (x, y, h, p) => `<div class="ttl" style="left:${x}px;top:${y}px"><h2>${h}</h2>${p ? `<p>${p}</p>` : ''}</div>`;
+const chars = (s, cls = 'c') => [...s].map(c => `<span class="ch ${cls}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+const GLY = 'ĐXK#Z%Q/01*ÂW';
+const ICONS = {{ICONS}};
+const LOGOS = {{LOGOS}};
+const IC = (n, sz = 40) => `<svg class="ic" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+
+var $$ = null;
+const SCENES = [
+{id: 's01', clip: 'clips/s01.mp4', dur: 6, poster: 3.2, name: 'Thẻ tiêu đề <em>lớn</em>',
+ desc: 'Gốc: thẻ "Mods" (RN 0:02), cắt cứng từ mặt sang 1 thẻ chữ serif + logo, nền có vệt sáng chéo. Bản Contentta: nền ivory, vệt sáng lavender/peach, logo camera Contentta, chữ Bricolage + Lora nghiêng plum.',
+ html: `<div class="hero" style="inset:0;opacity:0;z-index:30;background:var(--ivory);overflow:hidden">${BG}
+   <div class="beam" style="left:-400px;top:-300px;width:520px;height:1800px;transform:rotate(28deg);background:linear-gradient(90deg,transparent,rgba(183,168,255,.55),transparent);filter:blur(30px)"></div>
+   <div class="beam2" style="left:300px;top:-300px;width:260px;height:1800px;transform:rotate(28deg);background:linear-gradient(90deg,transparent,rgba(255,179,156,.5),transparent);filter:blur(24px)"></div>
+   <div class="eb" style="left:0;right:0;top:330px;text-align:center;font:700 26px Body;letter-spacing:.18em;color:var(--plum)">HỆ THỐNG</div>
+   <div style="left:0;right:0;top:390px;display:flex;justify-content:center;align-items:center;gap:40px">
+     <div class="mk" style="position:static;width:230px;height:162px;color:var(--plum)">{{logo:mark}}</div>
+     <div class="w1" style="position:static;font:800 210px Disp;letter-spacing:-.05em;line-height:1">YouTube</div>
+     <div class="w2 em" style="position:static;font-size:210px;line-height:1">AI</div></div>
+   <div class="hs" style="left:0;right:0;top:640px;text-align:center;font-size:34px;color:var(--ink-soft)">quay xong, AI edit hết</div></div>`,
+ anim(tl, $, f, v) {
+   tl.set($('.hero'), {opacity: 1}, 1.45); tl.set($('.hero'), {opacity: 0}, 4.95);
+   pop(tl, $('.mk'), 1.5, .4); rise(tl, $('.w1'), 1.6, 40); rise(tl, $('.w2'), 1.72, 40); rise(tl, $('.eb'), 1.55, 14); rise(tl, $('.hs'), 2.1, 14);
+   tl.fromTo($('.beam'), {x: 0}, {x: 900, duration: 3.6, ease: 'none'}, 1.45); tl.fromTo($('.beam2'), {x: 0}, {x: 700, duration: 3.6, ease: 'none'}, 1.45);
+ }},
+
+{id: 's02', clip: 'clips/s02.mp4', dur: 10, poster: 6.6, name: 'Mặt thu vào <em>khung bo</em> + sơ đồ',
+ desc: 'Gốc: chuyển cảnh chữ ký của video (RN 0:40, 1:00): mặt mờ đi, bo góc, thu nhỏ sang 1 bên; bên kia là sơ đồ nét mảnh, tick tròn bật lên theo lời. Ở đây: "màu tím" thì 2 bước AI sáng plum, "golden" thì 2 bước của bạn sáng vàng, "tự quay" thì thẻ Quay nảy lên.',
+ html: () => {
+   const items = [['file', 'Kịch bản', 'AI lên sườn', 'ai'], ['video', 'Quay', 'bạn tự quay', 'me'], ['wand', 'Edit', 'cắt, B-roll, da', 'ai'], ['eye', 'Duyệt', '1 lần rồi render', 'me']];
+   return BG + title(1330, 140, '4 công đoạn, <em>1 lần</em> duyệt', '<span style="color:var(--plum);font-weight:700">Tím</span>: AI làm · <span style="color:#B7862A;font-weight:700">Vàng</span>: bạn làm') +
+     items.map(([i, n, s, k], j) => `<div class="paper st st${j} ${k}" style="left:${820 + j*262}px;top:400px;width:240px;height:282px;border-radius:28px">
+       <div style="left:18px;top:16px;display:flex;gap:6px">${'<i style="position:static;width:9px;height:9px;border-radius:50%;background:var(--ink-faint)"></i>'.repeat(3)}</div>
+       <div class="tile" style="left:64px;top:56px;width:112px;height:112px;border-radius:30px;border:2px solid var(--line-strong);display:grid;place-items:center;color:var(--ink-muted)">${IC(i, 46)}</div>
+       <div class="lbl" style="left:0;right:0;top:190px;text-align:center;font-size:32px">${n}</div><div class="sub" style="left:0;right:0;top:234px;text-align:center;font-size:19px">${s}</div>
+       <div class="badge bd" style="right:-16px;top:-16px;background:${k == 'ai' ? 'var(--plum)' : 'var(--gold)'};opacity:0">${IC('check', 26)}</div></div>` +
+       (j < 3 ? `<div class="ar ar${j}" style="left:${820 + j*262 + 241}px;top:540px;width:20px;height:3px;background:var(--ink-faint);border-radius:2px"></div>` : '')).join('');
+ },
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.L, .55); rise(tl, $('.ttl'), .95);
+   $$('.st').forEach((e, j) => rise(tl, e, 1.05 + j*.08, 40)); $$('.ar').forEach((e, j) => tl.fromTo(e, {scaleX: 0}, {scaleX: 1, duration: .3}, 1.4 + j*.08));
+   const lit = (sel, t, col, fill) => $$(sel).forEach((e, j) => {
+     tl.to(e, {borderColor: col, duration: .3}, t + j*.12);
+     tl.to(e.querySelector('.tile'), {borderColor: col, backgroundColor: fill, color: col, duration: .3}, t + j*.12);
+     pop(tl, e.querySelector('.bd'), t + .1 + j*.12, .3); });
+   lit('.ai', 1.4, '#4A3AE0', 'rgba(183,168,255,.28)'); lit('.me', 3.4, '#C9962F', 'rgba(230,180,90,.22)');
+   tl.to($('.st1'), {scale: 1.08, y: -14, duration: .35, ease: 'back.out(2)'}, 7.5); tl.to($('.st1'), {scale: 1, y: 0, duration: .4}, 8.4);
+   move(tl, f, v, FULL, 9.25, .5);
+ }},
+
+{id: 's03', clip: 'clips/s03.mp4', dur: 14, poster: 13.8, name: 'Lưới icon <em>sáng theo lời</em>',
+ desc: 'Gốc: lưới icon viền cam (RN 0:20), mặt thu nhỏ góc dưới trái. Bản này: 6 ô hiện mờ trước, mỗi lần bạn nói tới việc nào thì ô đó sáng plum và nảy lên.',
+ html: () => BG + title(960, 120, 'AI làm <em>hết</em> phần edit', 'bạn chỉ quay và duyệt') +
+   [['scissors', 'Cắt vấp'], ['film', 'B-roll'], ['sparkles', 'Chỉnh da'], ['palette', 'Chỉnh màu'], ['image', 'Thumbnail'], ['file', 'Description']].map(([i, n], j) =>
+     `<div class="tl tl${j}" style="left:${600 + (j%3)*260}px;top:${330 + Math.floor(j/3)*300}px;width:200px">
+       <div class="box" style="left:20px;top:0;width:160px;height:160px;border-radius:40px;border:2.5px solid var(--ink-faint);background:rgba(255,255,255,.6);display:grid;place-items:center;color:var(--ink-faint)">${IC(i, 64)}</div>
+       <div class="lbl nm" style="left:0;right:0;top:178px;text-align:center;font-size:28px;color:var(--ink-muted)">${n}</div></div>`).join(''),
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.BL, .35); rise(tl, $('.ttl'), .7);
+   $$('.tl').forEach((e, j) => rise(tl, e, .85 + j*.06, 30));
+   [2.4, 3.3, 4.5, 6.0, 12.7, 13.5].forEach((t, j) => {
+     const e = $('.tl' + j);
+     tl.to(e.querySelector('.box'), {borderColor: '#4A3AE0', backgroundColor: 'rgba(183,168,255,.3)', color: '#4A3AE0', duration: .25}, t);
+     tl.fromTo(e.querySelector('.box'), {scale: 1.12}, {scale: 1, duration: .45, ease: 'back.out(2)'}, t);
+     tl.to(e.querySelector('.nm'), {color: '#17130D', duration: .25}, t); });
+ }},
+
+{id: 's04', clip: 'clips/s04.mp4', dur: 13, poster: 12.8, name: 'Chat trong <em>Claude</em>',
+ desc: 'Gốc: giao diện Claude Code desktop dựng lại (RN 0:06-0:17, 4:20), ô nhập viền sáng khi gõ, gửi xong hiện tool call. Bản này dựng đúng prompt thật của video: dán 2 file, gõ "edit video youtube này cho tôi. dùng skill youtube.", Claude gọi skill youtube.',
+ html: () => {
+   const side = ['he-thong-youtube-ai', 'capcut-ai-yt', 'topview-final', 'rea-yt'].map((s, j) =>
+     `<div style="position:static;padding:12px 16px;border-radius:12px;font-size:19px;${j ? 'color:var(--ink-soft)' : 'background:rgba(183,168,255,.3);color:var(--ink);font-weight:700'}">${s}</div>`).join('');
+   const files = ['Youtube AI system.mp4', 'youtube ai phan 1.mp4'].map(n =>
+     `<span class="fc" style="position:static;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;background:var(--ivory-deep);border:1px solid var(--line);font-size:18px;color:var(--ink-soft)">${IC('video', 20)}${n}</span>`).join('');
+   return BG + `<div class="win paper" style="left:70px;top:46px;width:1370px;height:762px;border-radius:24px;overflow:hidden;transform-origin:0 0;scale:1.3">
+     <div style="left:0;top:0;bottom:0;width:340px;background:var(--ivory);border-right:1px solid var(--line)">
+       <div style="left:22px;top:20px;display:flex;gap:7px">${'<i style="position:static;width:13px;height:13px;border-radius:50%;background:var(--ink-faint)"></i>'.repeat(3)}</div>
+       <div style="left:22px;right:22px;top:70px;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;border:1px solid var(--line-strong);background:#fff;font:700 19px Body">${IC('plus', 22)} Phiên mới</div>
+       <div style="left:38px;top:150px;font:700 14px Body;letter-spacing:.16em;color:var(--ink-muted)">GẦN ĐÂY</div>
+       <div style="left:22px;right:22px;top:180px;display:flex;flex-direction:column;gap:4px">${side}</div></div>
+     <div style="left:340px;right:0;top:0;height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 34px;font:700 21px Body">edit whole youtube video
+       <span style="position:static;font:600 15px Body;color:var(--plum);background:rgba(183,168,255,.3);padding:4px 12px;border-radius:999px">Code</span></div>
+     <div class="hi" style="left:340px;right:0;top:300px;text-align:center"><div style="position:static;width:64px;height:64px;margin:0 auto">{{logo:claude}}</div>
+       <div style="position:static;font:800 46px Disp;letter-spacing:-.03em;margin-top:18px">Hôm nay mình <span class="em">edit</span> gì?</div></div>
+     <div class="um" style="right:60px;top:110px;max-width:900px;padding:18px 22px;border-radius:22px;background:var(--ivory-deep);opacity:0">
+       <div style="position:static;display:flex;gap:10px;justify-content:flex-end">${files}</div>
+       <div style="position:static;font-size:23px;margin-top:12px;text-align:right">edit video youtube này cho tôi. dùng skill youtube.</div></div>
+     <div class="as as1" style="left:400px;top:290px;display:flex;align-items:center;gap:14px;font:24px Body;opacity:0"><div style="position:static;width:30px;height:30px">{{logo:claude}}</div>Mình sẽ dùng skill <b style="position:static">youtube</b> cho 2 file này.</div>
+     <div class="as as2" style="left:444px;top:350px;display:flex;align-items:center;gap:12px;font:20px Mono;opacity:0"><i class="dot" style="position:static;width:12px;height:12px;border-radius:50%;background:var(--plum)"></i>Skill(youtube)<span style="position:static;color:var(--ink-muted)">  Launching skill: youtube</span></div>
+     <div class="as as3" style="left:444px;top:398px;display:flex;align-items:center;gap:12px;font:20px Mono;opacity:0"><i style="position:static;width:12px;height:12px;border-radius:50%;background:var(--gold)"></i>Bash(ffmpeg -f concat … raw.mp4)<span class="sp" style="position:static;color:var(--plum)">  đang ghép 2 phần…</span></div>
+     <div class="inp" style="left:470px;right:120px;top:770px;height:190px;border-radius:26px;border:2px solid var(--line-strong);background:#fff;box-shadow:var(--shadow)">
+       <div class="fs" style="left:26px;top:20px;display:flex;gap:10px;opacity:0">${files}</div>
+       <div class="ph" style="left:28px;top:30px;font-size:24px;color:var(--ink-faint)">Nhập yêu cầu, hoặc / để gọi lệnh</div>
+       <div class="tx" style="left:28px;top:80px;font-size:26px;white-space:nowrap">${chars('edit video youtube này cho tôi. dùng skill youtube.', 'k')}<span class="cr" style="position:relative;display:inline-block;width:3px;height:30px;background:var(--plum);vertical-align:-5px;opacity:0"></span></div>
+       <div style="left:26px;bottom:18px;display:flex;gap:10px;font:600 17px Body;color:var(--ink-muted)"><span style="position:static;border:1px solid var(--line);border-radius:10px;padding:6px 12px">Opus 5.5</span><span style="position:static;border:1px solid var(--line);border-radius:10px;padding:6px 12px">edit whole youtube video</span></div>
+       <div class="send" style="right:20px;bottom:16px;width:52px;height:52px;border-radius:16px;background:var(--ink-faint);display:grid;place-items:center;color:#fff">${IC('up', 26)}</div></div></div>`;
+ },
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.BL, .3, .5); rise(tl, $('.win'), .5, 30);
+   tl.to($('.inp'), {borderColor: '#4A3AE0', boxShadow: '0 0 0 6px rgba(123,108,255,.18)', duration: .3}, 2.0);
+   tl.set($('.ph'), {opacity: 0}, 5.3); rise(tl, $('.fs'), 5.3, 10);
+   const ks = $$('.k'); tl.set(ks, {display: 'none'}, 0); ks.forEach((k, j) => tl.set(k, {display: 'inline-block'}, 7.4 + j*(3.8/ks.length)));
+   tl.set($('.cr'), {opacity: 1}, 7.4); tl.set($('.send'), {backgroundColor: '#4A3AE0'}, 7.6);
+   pop(tl, $('.send'), 11.55, .8); tl.to([$('.fs'), $('.tx')], {opacity: 0, duration: .2}, 11.6); tl.to($('.hi'), {opacity: 0, y: -20, duration: .3}, 11.6);
+   tl.set($('.send'), {backgroundColor: '#BDB4A6'}, 11.8); tl.to($('.inp'), {borderColor: 'rgba(23,19,13,.16)', boxShadow: '0 0 0 0px rgba(123,108,255,0)', duration: .3}, 11.7);
+   tl.fromTo($('.um'), {opacity: 0, y: 500}, {opacity: 1, y: 0, duration: .5, ease: 'expo.out'}, 11.6);
+   rise(tl, $('.as1'), 12.0, 12); rise(tl, $('.as2'), 12.3, 12); rise(tl, $('.as3'), 12.6, 12);
+ }},
+
+{id: 's05', clip: 'clips/s05.mp4', dur: 11, poster: 9.9, name: 'Timeline <em>tự cắt</em>',
+ desc: 'Gốc: các khung UI nét mảnh có thanh tiến độ, phần đổi trạng thái đổi màu (RN 3:20, 3:40). Bản này minh hoạ luật "cắt cắt": câu vấp đỏ lên lúc bạn nói "dừng", chip "cắt cắt" bật plum, rồi cả 2 bị rút ra, câu nói lại dồn sang trái.',
+ html: () => {
+   const bars = (n, seed) => Array.from({length: n}, (_, i) => `<i style="position:static;display:inline-block;width:6px;margin-right:4px;border-radius:3px;background:currentColor;height:${12 + Math.round(26*Math.abs(Math.sin(i*1.7 + seed)) + 14*Math.abs(Math.sin(i*.6 + seed*2)))}px"></i>`).join('');
+   const seg = (cls, w, label, col, seed) => `<div class="seg ${cls}" style="position:relative;flex:none;width:${w}px;height:200px;margin-right:12px;overflow:hidden">
+     <div class="sl" style="left:0;right:0;top:0;height:56px;border-radius:14px;border:2px solid var(--line-strong);background:#fff;font-size:20px;line-height:52px;padding:0 16px;white-space:nowrap;overflow:hidden">${label}</div>
+     <div class="wv" style="left:0;right:0;top:76px;height:110px;border-radius:14px;background:rgba(169,224,194,.25);display:flex;align-items:center;padding:0 10px;overflow:hidden;color:${col}">${bars(Math.floor(w/10), seed)}</div></div>`;
+   return BG + title(600, 170, 'Luật 1: <em>cắt cắt</em>', 'vấp thì dừng, nói lại cả câu') +
+     `<div class="tlw paper" style="left:100px;top:400px;width:1000px;height:330px;padding:0">
+       <div style="left:30px;top:30px;font:700 15px Body;letter-spacing:.16em;color:var(--ink-muted)">TIMELINE · RAW</div>
+       <div class="row" style="left:30px;top:80px;width:940px;display:flex;align-items:flex-start">
+        ${seg('sa', 330, 'mình gọi hết vào 3…', '#3E9B6E', 1)}${seg('sb', 150, '<b style="position:static">cắt cắt</b>', '#3E9B6E', 4)}${seg('sc', 420, 'mình gọi hết vào 3 công đoạn', '#3E9B6E', 7)}</div>
+       <div class="ph" style="left:30px;top:66px;width:3px;height:230px;background:var(--plum);border-radius:2px"></div></div>
+     <div class="scis" style="left:520px;top:330px;color:var(--plum);opacity:0">${IC('scissors', 64)}</div>
+     <div class="ok" style="left:390px;top:770px;display:flex;align-items:center;gap:14px;padding:12px 22px;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);font:700 24px Body;opacity:0">
+       <span class="badge" style="position:static;width:36px;height:36px;background:#3E9B6E">${IC('check', 20)}</span>AI tự bỏ câu vấp</div>`;
+ },
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.R, .45); rise(tl, $('.ttl'), .9); rise(tl, $('.tlw'), 1.05, 40);
+   tl.fromTo($('.ph'), {x: 0}, {x: 860, duration: 7.4, ease: 'none'}, 1.1);
+   tl.to($('.sa .sl'), {borderColor: '#F07A5A', backgroundColor: 'rgba(255,179,156,.35)', duration: .3}, 3.0);
+   tl.to($('.sa .wv'), {color: '#F07A5A', backgroundColor: 'rgba(255,179,156,.25)', duration: .3}, 3.0);
+   tl.to($('.sb .sl'), {borderColor: '#4A3AE0', backgroundColor: '#4A3AE0', color: '#fff', duration: .25}, 7.8);
+   tl.fromTo($('.sb'), {scale: 1.15}, {scale: 1, duration: .4, ease: 'back.out(2)'}, 7.8);
+   pop(tl, $('.scis'), 8.5, .4); tl.to($('.scis'), {y: 180, rotation: -30, opacity: 0, duration: .5, ease: 'power2.in'}, 9.0);
+   tl.to([$('.sa'), $('.sb')], {width: 0, marginRight: 0, opacity: 0, duration: .55, ease: 'power3.inOut'}, 8.7);
+   tl.to($('.ph'), {opacity: 0, duration: .2}, 8.6); pop(tl, $('.ok'), 9.4, .7);
+ }},
+
+{id: 's06', clip: 'clips/s06.mp4', dur: 12, poster: 11.8, name: 'Thẻ <em>"Bạn nên biết"</em>',
+ desc: 'Gốc: thẻ "You Should Know" (RN 5:00, 5:20) có icon, dòng chữ được tô highlight và thanh mức dùng. Bản này: "600 nghìn" được tô plum đúng lúc nói, thanh chi phí chạy lên, cuối thẻ hiện gói Claude Max bạn đang dùng.',
+ html: () => BG + title(1290, 150, 'Thumbnail cần <em>Codex</em>', 'Claude Code chưa tạo ảnh đẹp') +
+   `<div class="cb paper" style="left:900px;top:340px;width:780px;height:560px">
+     <div style="left:36px;top:32px;display:flex;align-items:center;gap:14px;font:800 32px Disp;letter-spacing:-.02em"><span style="position:static;color:#C9962F">${IC('bulb', 36)}</span>Bạn nên biết</div>
+     <div class="a1" style="left:36px;top:110px;display:flex;align-items:center;gap:20px">
+       <img src="img/chatgpt.png" style="position:static;width:88px;height:88px;border-radius:22px;box-shadow:var(--shadow)">
+       <div style="position:static"><div style="position:static;font:800 30px Disp">Codex image</div><div class="sub" style="position:static">tạo thumbnail, ảnh minh hoạ</div></div></div>
+     <div class="l1" style="left:36px;top:240px;font-size:30px;white-space:nowrap">Thêm <span class="mk" style="position:relative;display:inline-block;padding:0 6px;isolation:isolate"><i class="hl" style="left:0;top:4px;bottom:2px;width:100%;background:rgba(183,168,255,.6);border-radius:6px;transform-origin:0 50%;z-index:-1"></i><b style="position:relative">khoảng 600 nghìn</b></span> mỗi tháng (22 đô)</div>
+     <div style="left:36px;top:318px;font:700 15px Body;letter-spacing:.16em;color:var(--ink-muted)">CHI PHÍ THÊM</div>
+     <div style="left:36px;right:36px;top:350px;height:18px;border-radius:9px;background:var(--ivory-deep)"><div class="br" style="left:0;top:0;bottom:0;width:22%;border-radius:9px;background:var(--plum);transform-origin:0 50%"></div></div>
+     <div class="a2" style="left:36px;top:420px;display:flex;align-items:center;gap:20px;opacity:0">
+       <div style="position:static;width:72px;height:72px;border-radius:20px;background:#fff;border:1px solid var(--line);padding:14px;box-shadow:var(--shadow)">{{logo:claude}}</div>
+       <div style="position:static;font-size:26px">Đang có gói <b style="position:static">Claude Max</b></div></div></div>`,
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.L, .4); rise(tl, $('.ttl'), .8); rise(tl, $('.cb'), .95, 40);
+   tl.fromTo($('.a1'), {opacity: 0, x: -20}, {opacity: 1, x: 0, duration: .4}, 1.1); rise(tl, $('.l1'), 1.4, 12);
+   tl.fromTo($('.hl'), {scaleX: 0}, {scaleX: 1, duration: .45, ease: 'power2.out'}, 4.0);
+   tl.fromTo($('.br'), {scaleX: 0}, {scaleX: 1, duration: .7, ease: 'expo.out'}, 4.9);
+   rise(tl, $('.a2'), 11.2, 14);
+ }},
+
+{id: 's07', clip: 'clips/s07.mp4', dur: 6.5, poster: 5.4, name: 'Logo <em>bật quanh mặt</em>',
+ desc: 'Gốc: đoạn giới thiệu (RN 0:27-0:30): khung hình trượt sang phải, nửa trái phủ trắng mờ dần, logo khách hàng bật lên từng cái. Bản này: nói tới Claude Code, Codex, YouTube thì logo đó bật ra.',
+ html: () => `<div class="lp" style="inset:0;z-index:25;background:linear-gradient(90deg,var(--ivory) 0%,var(--ivory) 30%,rgba(250,246,239,.85) 44%,rgba(250,246,239,0) 62%);opacity:0"></div>
+   <div class="eb" style="left:120px;top:150px;z-index:26;font:800 64px Disp;letter-spacing:-.04em">Chỉ cần <span class="em">1 trong 2</span></div>` +
+   [['claude', 'Claude Code', 170, 300], ['codex', 'Codex', 470, 400], ['youtube', 'YouTube', 230, 640]].map(([k, n, x, y]) =>
+     `<div class="lg lg-${k}" style="left:${x}px;top:${y}px;z-index:26;width:220px;text-align:center;opacity:0">
+       <div style="position:relative;margin:0 auto;width:180px;height:180px;border-radius:44px;background:#fff;box-shadow:var(--shadow);border:1px solid var(--line);padding:36px">${k == 'codex' ? '<img src="img/chatgpt.png" style="position:static;width:100%;height:100%;border-radius:14px">' : LOGOS[k]}</div>
+       <div class="lbl" style="position:static;margin-top:14px;font-size:28px">${n}</div></div>`).join(''),
+ anim(tl, $, f, v) {
+   tl.to(f, {left: 400, duration: .6, ease: 'power3.inOut'}, .9); tl.to($('.lp'), {opacity: 1, duration: .5}, 1.0); rise(tl, $('.eb'), 1.2, 20);
+   pop(tl, $('.lg-claude'), 1.7, .5); pop(tl, $('.lg-codex'), 2.6, .5); pop(tl, $('.lg-youtube'), 4.9, .5);
+   tl.to([$('.lg-claude'), $('.lg-codex'), $('.lg-youtube'), $('.eb')], {opacity: 0, y: -16, duration: .3}, 5.95);
+   tl.to($('.lp'), {opacity: 0, duration: .4}, 6.0); tl.to(f, {left: 0, duration: .45, ease: 'power3.inOut'}, 6.0);
+ }},
+
+{id: 's08', clip: 'clips/s08.mp4', dur: 7.2, poster: 6.4, name: 'Trang thật + <em>zoom số</em>',
+ desc: 'Gốc: chụp trang web/cộng đồng toàn khung, mặt ở góc dưới trái (RN 5:40, 6:00). Bản này: trang YouTube thật của video REA, lúc nói "11.000 lượt xem" thì zoom vào dòng view và tô plum.',
+ html: () => BG + `<div class="bw paper" style="left:330px;top:60px;width:1510px;height:960px;border-radius:26px;overflow:hidden">
+     <div style="left:0;right:0;top:0;height:62px;background:var(--ivory);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 22px">${'<i style="position:static;width:13px;height:13px;border-radius:50%;background:var(--ink-faint)"></i>'.repeat(3)}
+       <span style="position:static;margin-left:20px;flex:1;height:38px;border-radius:12px;background:#fff;border:1px solid var(--line);font:18px Body;color:var(--ink-muted);line-height:36px;padding:0 16px">youtube.com/watch?v=hfbuOVhKIWM</span></div>
+     <div class="pg" style="left:0;top:62px;width:1510px;height:850px;transform-origin:150px 220px"><img src="img/web-06-rea-views.png" style="left:0;top:0;width:1510px">
+       <i class="hl" style="left:118px;top:205px;width:212px;height:30px;border-radius:6px;background:rgba(123,108,255,.35);transform-origin:0 50%;mix-blend-mode:multiply"></i></div></div>`,
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.BL, .35); tl.fromTo($('.bw'), {opacity: 0, y: 70, filter: 'blur(10px)'}, {opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out'}, .5);
+   tl.fromTo($('.pg'), {scale: 1}, {scale: 2.1, duration: .9, ease: 'power3.inOut'}, 3.7);
+   tl.fromTo($('.hl'), {scaleX: 0}, {scaleX: 1, duration: .45, ease: 'power2.out'}, 4.4);
+ }},
+
+{id: 's09', clip: 'clips/s09.mp4', dur: 10, poster: 9.6, name: 'Gallery duyệt + <em>công tắc</em>',
+ desc: 'Gốc: các khung UI có tick và công tắc gạt (RN 11:20 "Hot reloading"). Bản này: trang duyệt ảnh mẫu thật của video này, nói "duyệt" thì tick plum lần lượt, cuối đoạn gạt công tắc Render.',
+ html: () => BG + title(610, 130, 'Duyệt <em>1 lần</em> rồi mới render', 'AI gửi 1 file HTML để bạn xem') +
+   `<div class="gw paper" style="left:110px;top:310px;width:1000px;height:560px;border-radius:26px;overflow:hidden">
+     <div style="left:0;right:0;top:0;height:56px;background:var(--ivory);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;padding:0 20px">${'<i style="position:static;width:12px;height:12px;border-radius:50%;background:var(--ink-faint)"></i>'.repeat(3)}
+       <span style="position:static;margin-left:16px;font:600 17px Body;color:var(--ink-muted)">review/index.html</span></div>` +
+   ['003', '015', '027', '031', '043', '062'].map((n, j) => `<div class="th th${j}" style="left:${34 + (j%3)*318}px;top:${88 + Math.floor(j/3)*232}px;width:296px;height:200px">
+       <img src="img/ov-${n}-hero.jpg" style="left:0;top:0;width:296px;height:166px;border-radius:14px;object-fit:cover;border:1px solid var(--line)">
+       <div style="left:4px;top:172px;font:600 16px Mono;color:var(--ink-muted)">ov-${n}</div>
+       <div class="badge tk" style="right:-10px;top:-12px;width:44px;height:44px;background:var(--plum);opacity:0">${IC('check', 22)}</div></div>`).join('') +
+   `</div><div class="tg paper" style="left:110px;top:900px;width:1000px;height:96px;border-radius:24px;display:flex;align-items:center;justify-content:space-between;padding:0 30px">
+     <div style="position:static;font:800 30px Disp">Render video</div>
+     <div class="tr" style="position:relative;width:96px;height:52px;border-radius:26px;background:var(--ink-faint)"><div class="kn" style="left:5px;top:5px;width:42px;height:42px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div></div></div>`,
+ anim(tl, $, f, v) {
+   move(tl, f, v, CARD.R, .5); rise(tl, $('.ttl'), .9); rise(tl, $('.gw'), 1.0, 40); rise(tl, $('.tg'), 1.2, 30);
+   $$('.th').forEach((e, j) => tl.fromTo(e, {opacity: 0, y: 24}, {opacity: 1, y: 0, duration: .4, ease: 'expo.out'}, 1.3 + j*.07));
+   $$('.tk').forEach((e, j) => pop(tl, e, 6.1 + j*.18, .3));
+   tl.to($('.tr'), {backgroundColor: '#4A3AE0', duration: .25}, 8.9); tl.to($('.kn'), {x: 44, duration: .3, ease: 'back.out(1.6)'}, 8.9);
+ }},
+
+{id: 's10', clip: 'clips/s10.mp4', dur: 5.7, poster: 3.6, name: 'Câu chốt <em>phía dưới</em>',
+ desc: 'Gốc: câu chốt hiện ngay trên khung mặt full (RN 9:40). Bản này theo ý bạn: không nhiễu chữ, chữ hiện lên bình thường ở phía dưới, trên dải ivory mờ để đọc được.',
+ html: `<div class="gb" style="left:0;right:0;bottom:0;height:420px;z-index:25;background:linear-gradient(0deg,rgba(250,246,239,.94),rgba(250,246,239,.7) 50%,rgba(250,246,239,0));opacity:0"></div>
+   <div class="gt" style="left:0;right:0;top:780px;z-index:26;text-align:center;font:800 100px Disp;letter-spacing:-.04em;white-space:nowrap">Video này do <span class="em">AI edit</span></div>
+   <div class="gs" style="left:0;right:0;top:912px;z-index:26;text-align:center;font-size:34px;color:var(--ink-soft)">thumbnail, animation, B-roll: cùng 1 skill</div>`,
+ anim(tl, $) {
+   tl.to($('.gb'), {opacity: 1, duration: .35}, 1.1); rise(tl, $('.gt'), 1.25, 30); rise(tl, $('.gs'), 2.9, 14);
+   tl.to([$('.gt'), $('.gs'), $('.gb')], {opacity: 0, y: 16, duration: .35}, 5.2);
+ }},
+];
+
+</script>
+<script src="scenes/kit.js"></script>
+<script src="scenes/b.js"></script>
+<script src="scenes/c.js"></script>
+<script src="scenes/d.js"></script>
+<script src="scenes/e.js"></script>
+<script>
+SCENES.sort((a, b) => +a.id.slice(1) - +b.id.slice(1));
+const list = document.getElementById('list');
+SCENES.forEach((s, n) => {
+  const box = document.createElement('section'); box.className = 'scene'; box.id = s.id;
+  document.getElementById('nav').insertAdjacentHTML('beforeend', `<a href="#${s.id}" style="font:600 13px Body;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none">${s.id} ${s.name.replace(/<[^>]+>/g, '')}</a>`);
+  box.innerHTML = `<div class="cap"><span class="no">${s.id}</span><h3>${s.name}</h3><p>${s.desc}</p></div>
+    <div class="frame"><div class="stage">${typeof s.html == 'function' ? s.html() : s.html}<div class="face"><video data-src="${s.clip}" preload="auto" playsinline></video></div></div></div>
+    <div class="ctrl"><button>Phát</button><input type="range" min="0" max="${s.dur}" step="0.01" value="${s.poster}"><span>0.0 / ${s.dur}s</span></div>`;
+  list.appendChild(box);
+  const stage = box.querySelector('.stage'), f = stage.querySelector('.face'), v = f.querySelector('video');
+  const $ = q => stage.querySelector(q); $$ = q => [...stage.querySelectorAll(q)];
+  // the hero card in s01 hides the face; other scenes start full-frame
+  gsap.set(f, {...FULL.box, filter: 'blur(0px)'}); gsap.set(v, FULL.vid); gsap.set($$('.ttl'), {xPercent: -50});
+  FACE = FACES[s.id] || FACE;
+  const tl = gsap.timeline({paused: true}); s.anim(tl, $, f, v); tl.set({}, {}, s.dur);
+  s.tl = tl; s.v = v; s.box = box;
+  const btn = box.querySelector('button'), rng = box.querySelector('input'), lab = box.querySelector('.ctrl span');
+  const show = t => { tl.time(t); rng.value = t; lab.textContent = `${t.toFixed(1)} / ${s.dur}s`; };
+  s.show = show; show(s.poster);
+  v.addEventListener('loadeddata', () => { if (v.paused && !v.currentTime) { v.currentTime = s.poster; show(s.poster); } s.ready = true; }, {once: true});
+  const toggle = () => {
+    if (v.paused) { SCENES.forEach(o => o !== s && !o.v.paused && o.stop()); if (v.currentTime >= s.dur - .05) v.currentTime = 0; v.play(); btn.textContent = 'Dừng'; btn.classList.add('on'); }
+    else s.stop(); };
+  s.stop = () => { v.pause(); btn.textContent = 'Phát'; btn.classList.remove('on'); };
+  btn.onclick = toggle; box.querySelector('.frame').onclick = toggle;
+  rng.oninput = () => { v.currentTime = +rng.value; show(+rng.value); };
+  v.addEventListener('ended', () => s.stop());
+});
+// load each clip only when its scene comes near the viewport (50 videos at once stall Chrome)
+const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const v = e.target.querySelector('video'); if (!v.src) v.src = v.dataset.src; io.unobserve(e.target); }), {rootMargin: '600px'});
+document.querySelectorAll('.scene').forEach(b => io.observe(b));
+const fit = () => document.querySelectorAll('.frame').forEach(fr => fr.querySelector('.stage').style.transform = `scale(${fr.clientWidth/1920})`);
+addEventListener('resize', fit); fit();
+(function loop() { SCENES.forEach(s => { if (!s.v.paused) s.show(Math.min(s.v.currentTime, s.dur)); }); requestAnimationFrame(loop); })();
+</script>
+</body>
+</html>

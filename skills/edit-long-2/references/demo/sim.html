@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude screen sim</title>
+<style>
+@font-face{font-family:Disp;src:url(fonts/display.ttf)}
+@font-face{font-family:Mono;src:url(fonts/mono.ttf)}
+:root{--ivory:#FAF6EF;--ink:#17130D;--plum:#4A3AE0;--line:#E6E3DC;--txt:#1F1E1D;--mut:#73706A;--faint:#A8A49C;--clay:#D97757;--side:#F7F6F3}
+*{box-sizing:border-box;margin:0}
+body{background:var(--ivory);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;padding:40px 24px 80px}
+.wrap{max-width:1280px;margin:0 auto}
+h1{font:800 46px Disp;letter-spacing:-.04em}
+h1 em{font-family:Georgia,serif;font-style:italic;font-weight:500;color:var(--plum)}
+.lead{color:#4A4339;font-size:16px;line-height:1.65;margin:12px 0 22px;max-width:900px}
+.frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid rgba(23,19,13,.12);box-shadow:0 18px 40px -18px rgba(23,19,13,.3);cursor:pointer;background:#000}
+.ctrl{display:flex;align-items:center;gap:12px;margin-top:10px}
+.ctrl button{font:600 14px "Segoe UI";border:1px solid rgba(23,19,13,.16);background:#fff;border-radius:999px;padding:8px 18px;cursor:pointer}
+.ctrl button.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.ctrl input{flex:1;accent-color:var(--plum)}
+.ctrl span{font:13px Mono;color:#8A8073;min-width:120px;text-align:right}
+.steps{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.steps a{font:600 13px "Segoe UI";background:#fff;border:1px solid rgba(23,19,13,.1);border-radius:999px;padding:6px 12px;color:var(--ink);text-decoration:none;cursor:pointer}
+
+/* ---- 1920x1080 stage; the "screen" is 1536x864 logical px shown at 125% like Windows display scaling ---- */
+.stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:#111}
+.cam{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+.screen{position:absolute;left:0;top:0;width:1536px;height:864px;transform-origin:0 0;scale:1.25;overflow:hidden;font-size:15px;color:var(--txt)}
+.screen *{position:absolute}
+.screen .f{position:relative}
+.wall{inset:0;background:radial-gradient(ellipse at 30% 40%,#dfe6f5,#c9d6ee 40%,#b8c7e6 70%,#aebfe2)}
+.task{left:0;bottom:0;width:1536px;height:38.4px;z-index:60}
+.win{background:#fff;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.wc{right:0;top:0;display:flex;height:40px}
+.wc i{position:relative;width:46px;height:40px;display:grid;place-items:center;font-style:normal;color:#333;font-size:14px}
+.ico{position:relative;display:inline-block;vertical-align:middle}
+.row{display:flex;align-items:center}
+/* Claude desktop, authored in physical px measured on a real 1920x1080 screenshot, scaled .8 into the 1536 logical screen */
+.cw{left:0;top:0;width:1920px;height:1032px;scale:.8;transform-origin:0 0;background:#fff;font-size:14px;color:#1F1F1F}
+.fl > *{position:relative}
+.fl{display:flex;align-items:center}
+.side{left:0;top:0;bottom:0;width:280px;background:#FAFAFA;border-right:1px solid #E5E5E5;z-index:5}
+.seg{left:8px;right:10px;top:47px;height:30px;border-radius:8px;background:#EEE;padding:2px;display:flex}
+.seg b{position:relative;flex:1;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:400;font-size:14.5px;color:#555}
+.seg b > *{position:relative}
+.seg b.on{background:#fff;color:#1F1F1F;box-shadow:0 0 0 1px #E3E3E3}
+.grp{left:18px;right:18px;height:34px;font-weight:600;font-size:13.5px;color:#1F1F1F}
+.sess{left:8px;right:12px;height:34px;border-radius:8px;padding:0 10px;line-height:34px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#2B2B2B}
+.sess i{position:absolute;right:12px;top:14px;width:6px;height:6px;border-radius:50%;background:#A0A0A0}
+.tbar{left:280px;right:0;top:0;height:37px;border-bottom:1px solid #E0E0E0;z-index:4;background:#fff}
+.tbi{position:relative;width:30px;height:28px;border-radius:6px;display:grid;place-items:center;color:#333}
+.col{width:720px;top:52px;bottom:100px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;gap:16px;padding-bottom:4px}
+.col > *{position:relative;flex:none}
+.msg{font-size:15px;line-height:1.55;color:#1F1F1F}
+.msg b{position:relative;font-weight:600}
+.msg a,.lnk{position:relative;color:#2563EB;text-decoration:underline}
+.ub{align-self:flex-end;max-width:560px;background:#F2F2F2;border-radius:14px;padding:10px 14px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.tool{font-size:14.5px;color:#7A7A7A}
+.tool .h{position:relative;display:flex;align-items:center;gap:8px}
+.tool .o{position:relative;margin:6px 0 0 22px;padding:8px 12px;border-radius:8px;background:#FAFAFA;border:1px solid #E5E5E5;font:12.5px Mono;color:#3D3D3D;white-space:pre-wrap}
+.inp{width:720px;bottom:40px;min-height:46px;border:1px solid #D5D5D5;border-radius:14px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;align-items:flex-end;gap:12px;padding:12px 14px 11px}
+.inp > *{position:relative;flex:none}
+.inp .tx{flex:1;font-size:15px;line-height:22px;min-height:22px;color:#1F1F1F;white-space:pre-wrap;word-break:break-word}
+.inp .ph{color:#9A9A9A}
+.snd{width:28px;height:28px;margin:-3px 0;border-radius:8px;background:#D97757;color:#fff;display:none;place-items:center}
+.under{width:720px;bottom:8px;height:24px;gap:18px;font-size:13.5px;color:#333}
+.chip{gap:8px;height:26px;padding:0 6px;margin:0 -6px;border-radius:6px;white-space:nowrap}
+.menu{background:#fff;border:1px solid #E3E3E3;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.14);padding:6px;font-size:14px;z-index:30}
+.menu .it{position:relative;padding:0 12px;height:38px;border-radius:8px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.menu .it > *{position:relative}
+.card{border:1px solid #E5E5E5;border-radius:12px;background:#fff;padding:6px 0;font-size:14px}
+.card .it{position:relative;height:34px;padding:0 12px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.card .it > *{position:relative}
+.pane{top:37px;bottom:0;left:936px;right:0;background:#fff;border-left:1px solid #E0E0E0;z-index:3}
+/* chrome / explorer */
+.cur{width:22px;height:28px;z-index:100;pointer-events:none}
+.rip{width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;border:3px solid rgba(74,58,224,.75);z-index:99;opacity:0}
+.face{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;z-index:200;box-shadow:0 0 0 5px rgba(255,255,255,.95),0 30px 60px -20px rgba(0,0,0,.5);background:#ddd}
+.face video{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+.tag{position:absolute;left:24px;top:22px;z-index:210;padding:8px 14px;border-radius:999px;background:rgba(23,19,13,.72);color:#fff;font:600 15px "Segoe UI";opacity:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Giả lập <em>quay màn hình</em> Claude</h1>
+  <p class="lead">Đoạn 10:29 → hết video (5:08), lúc bạn kể các bước thao tác trong Claude mà chưa quay màn hình. Mình dựng lại màn hình máy bạn: app Claude desktop tab Code (theo ảnh chụp thật trong máy), Chrome mở GitHub, File Explorer, hộp chọn folder. Con trỏ, gõ phím, kết quả tool chạy đúng theo lời bạn nói. Prompt Topview, "ov 003,004,005" và "duyệt, chọn t2." là câu thật bạn đã gõ ngày 27/10. Bấm khung để phát có tiếng.</p>
+  <div class="frame" id="fr"><div class="stage" id="st"><div class="cam" id="cam"><div class="screen" id="scr"></div></div>
+    <div class="face" id="face"><video id="v" src="clips/sim.mp4" preload="auto" playsinline></video></div><div class="tag" id="tag"></div></div></div>
+  <div class="ctrl"><button id="btn">Phát</button><input id="rng" type="range" min="0" max="307.9" step="0.01" value="0"><span id="lab">10:29 / 15:37</span></div>
+  <div class="steps" id="steps"></div>
+</div>
+<script src="gsap.min.js"></script>
+<script>
+const T0 = 629.4, END = 937.3, C = t => +(t - T0).toFixed(2);   // all step times below are times in the cut video
+const $ = q => document.querySelector(q), $$ = q => [...document.querySelectorAll(q)];
+const LOGO = '<svg viewBox="0 0 24 24" width="100%" height="100%"><path fill="#D97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.2549h.3886l.0546-.1578-.1336-.0971-.1032-.0972L6.973 9.8356l-2.546-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>';
+const I = (d, s = 16, c = 'currentColor') => `<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const IC = {plus: '<path d="M12 5v14M5 12h14"/>', mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/>',
+  up: '<path d="M12 19V5M5 12l7-7 7 7"/>', folder: '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>',
+  pc: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>', down: '<path d="m6 9 6 6 6-6"/>', term: '<path d="m4 17 6-6-6-6M12 19h8"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>', copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h6"/>', video: '<path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+  cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/>', server: '<rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  chev: '<path d="m9 18 6-6-6-6"/>', bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>', side: '<rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M7.5 9.5v5"/>',
+  menu: '<path d="M4 6h16M4 12h16M4 18h11"/>', left: '<path d="m15 18-6-6 6-6"/>', home: '<path d="M3.5 10.5 12 3.5l8.5 7V20h-5.5v-5.5h-6V20H3.5z"/>', code: '<path d="m9 8-4 4 4 4M15 8l4 4-4 4"/>',
+  laptop: '<path d="M18 5a2 2 0 0 1 2 2v8.5l1.3 2.6a1 1 0 0 1-.9 1.4H3.6a1 1 0 0 1-.9-1.4L4 15.5V7a2 2 0 0 1 2-2z"/><path d="M4 15.5h16"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  bug: '<path d="M12 20v-8M8 8.5h8a2 2 0 0 1 2 2V14a6 6 0 0 1-12 0v-3.5a2 2 0 0 1 2-2zM9 8.5V7a3 3 0 0 1 6 0v1.5M6 13H2.5M21.5 13H18M6 17.5l-2.5 2M18 17.5l2.5 2M6 9.5 3.5 7.5M18 9.5l2.5-2"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>', min: '<path d="M5 12h14"/>', max: '<rect x="7" y="7" width="11" height="11" rx="1.5"/><path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4H17a3 3 0 0 1 3 3v5.5a1.5 1.5 0 0 1-1.5 1.5H18"/>',
+  expand: '<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>', dots: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>'};
+const SPIN = '<svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke="#DADADA"/><path d="M12 4a8 8 0 0 1 8 8" stroke="#3B82F6"/></svg>';
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const chars = (s, cls) => [...s].map(c => `<span class="f ${cls}" style="display:inline">${c == ' ' ? ' ' : esc(c)}</span>`).join('');
+const WC = '<div class="wc"><i>—</i><i>▢</i><i>✕</i></div>';
+const GH = 'https://github.com/thanhthuduc99/youtube-ai-editor';
+const PATHS = '"C:\\work\\youtube\\raw\\Youtube AI system.mp4"\n"C:\\work\\youtube\\raw\\youtube ai phan 1.mp4"';
+const TVP = 'C:\\work\\youtube\\2026\\top view final\n\nxem qua video này, edit giúp tôi. <hl1>Phần intro, tôi muốn nó hiện cái video lần lượt ở từng mốc tôi nói, hiện 1 brolls chạy full, video, lần lượt, và cho nó chạy lâu 1 xíu để tôi cho khán giả xem kết quả họ xem video sẽ là gì.</hl1> bên dưới sẽ là tên các video, TVC, UGC video, Story\n\n<hl2>bạn xem qua project topview để lấy video đó và làm brolls.</hl2>\n\ndùng skill youtube edit và làm thumb, description hết. bổ sung vô skill là khâu upload lên youtube luôn.';
+const OV = 'cái ov 003,004,005, tôi muốn nó hiện chung 1 frame, từ trái sang phải. cái đầu ở trái, xong tới cái 2 hiện giữa, cái 3 hiện phải, chạy 1 hồi để người xem thấy các video chạy như thế nào';
+const tool = (cls, cmd, out, icon = 'term') => `<div class="tool ${cls}"><div class="h">${I(IC[icon], 14)}<span class="f">${esc(cmd)}</span></div>${out ? `<div class="o">${esc(out)}</div>` : ''}</div>`;
+const msg = (cls, html) => `<div class="msg ${cls}">${html}</div>`;
+const hd = cls => `<div class="${cls}" style="display:none"></div>`;
+
+// ---------------- screen DOM ----------------
+$('#scr').innerHTML = `<div class="wall"></div>
+ <img class="task" src="img/sim/taskbar.png">
+
+ <div class="win cl" id="cl" style="left:0;top:0;width:1536px;height:826px;opacity:0;box-shadow:none"><div class="cw">
+  <div class="side">
+   <div class="fl" style="left:16px;top:5px;height:26px;gap:14px;color:#333">${I(IC.menu, 19)}${I(IC.side, 19)}${I(IC.left, 19)}<span style="color:#BBB">${I(IC.chev, 19)}</span></div>
+   <div class="seg"><b class="sg0 on">${I(IC.home, 16)}<span>Home</span></b><b class="sg1">${I(IC.code, 16)}<span>Code</span></b></div>
+   <div class="chat-side" style="left:0;right:0;top:0;bottom:0">
+     <div class="sess fl" style="top:96px;gap:10px;font-weight:600">${I(IC.plus, 16)}<span>New chat</span></div>
+     <div style="left:18px;top:146px;font-size:12.5px;color:#7A7A7A">Recents</div>
+     ${['Lên ý tưởng video tuần này', 'Viết lại caption Facebook', 'Tóm tắt meeting khách'].map((s, j) => `<div class="sess" style="top:${168 + j*34}px">${s}</div>`).join('')}</div>
+   <div class="code-side" style="left:0;right:0;top:0;bottom:0;opacity:0">
+     ${[['Content Agent', 101], ['visito upwork client', 255], ['edit whole youtube video', 341]].map(([g, y], j) => `<div class="grp fl g${j}" style="top:${y}px"><span>${g}</span><span style="font-size:9px;margin-left:9px">▼</span><span style="margin-left:auto;color:#444">${I(IC.plus, 17)}</span></div>`).join('')}
+     ${[['Kịch bản video Claude features', 135, 1], ['Dọn dẹp file ổ C không dùng', 169], ['Video AI creation guide', 203], ['Hotel chatbot options and pricing', 289, 1]].map(([s, y, d]) => `<div class="sess" style="top:${y}px">${s}${d ? '<i></i>' : ''}</div>`).join('')}
+     <div class="sess ss0" style="top:375px;display:none">YouTube video editing</div>
+     <div class="sess ss1" style="top:375px;display:none">Setup youtube-ai-editor</div>
+     <div class="sess ss2" style="top:375px">Top View video editing và upload</div></div>
+   <div class="fl usr" style="left:16px;right:16px;bottom:10px;height:28px;gap:10px">
+     <div style="width:22px;height:22px;border-radius:50%;background:#E8E8E8;color:#555;display:grid;place-items:center;font-size:11px">T</div>
+     <span style="font-size:14.5px">Thanh <span class="f" style="color:#8A8A8A;font-size:13px">· Max</span></span><span style="color:#8A8A8A">${I(IC.down, 13)}</span><span style="margin-left:auto;color:#666">${I(IC.bug, 18)}</span></div>
+   <div class="menu um" style="left:10px;bottom:46px;width:290px;display:none">
+     <div class="it" style="color:#7A7A7A;font-size:13px;height:32px">Thanh</div>
+     <div class="it pl"><b style="font-weight:600">Max plan</b><span style="margin-left:auto;font-size:12px;color:#fff;background:#D97757;border-radius:6px;padding:2px 8px">20x Pro</span></div>
+     <div class="it">${I(IC.gear, 15)}<span>Settings</span></div><div class="it"><span>Get help</span></div><div class="it"><span>Log out</span></div></div>
+   <div class="tip" style="left:12px;top:84px;padding:8px 12px;border-radius:8px;background:#1F1F1F;color:#fff;font-size:13.5px;white-space:nowrap;z-index:40;display:none">Home = Claude chat: hỏi đáp, vài công cụ MCP</div>
+  </div>
+  <div class="tbar">
+   <span class="htxt" style="left:19px;top:9px;font-size:14px;color:#555">Home</span>
+   <div class="fl" style="right:150px;top:4px;gap:4px"><span class="wn" style="color:#2563EB;font-size:14px;margin-right:12px;opacity:0">What's new</span><span class="tbi">${I(IC.term, 17)}</span><span class="tbi">${I(IC.globe, 17)}</span><span class="tbi" style="background:#EDEDED">${I(IC.folder, 17)}</span></div>
+   <div class="fl" style="right:0;top:0;height:36px">${[IC.min, IC.max, IC.x].map(d => `<span style="width:46px;height:36px;display:grid;place-items:center;color:#333">${I(d, 15).replace('stroke-width="2"', 'stroke-width="1.3"')}</span>`).join('')}</div></div>
+  <!-- Home (claude chat) -->
+  <div class="home" style="left:280px;right:0;top:37px;bottom:0">
+    <div class="fl" style="left:0;right:0;top:330px;justify-content:center;gap:14px;font:400 36px Cambria,"Times New Roman",serif;color:#3D3D3D"><div style="width:36px;height:36px">${LOGO}</div><span>Chào buổi chiều, Thành</span></div>
+    <div class="fl" style="left:460px;width:720px;top:410px;height:110px;border:1px solid #D5D5D5;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);align-items:flex-start;padding:16px 18px;color:#9A9A9A;font-size:15.5px">How can I help you today?</div>
+    <div class="fl" style="left:476px;width:690px;top:482px;height:28px;gap:12px;color:#555;font-size:13.5px">${I(IC.plus, 18)}<span style="margin-left:auto">Opus 5.5</span></div></div>
+  <!-- Code -->
+  <div class="code" style="left:0;top:0;width:1920px;height:1032px;opacity:0">
+    <div class="newv" style="left:0;top:0;width:1920px;height:1032px">
+      <img src="img/sim/clawd.png" style="left:1222px;top:383px;width:38px;height:27px;image-rendering:pixelated">
+      <div class="card" style="left:940px;top:410px;width:320px">
+        <div class="it">${I(IC.laptop, 15)}<span>ai prompt to create proposal</span></div><div class="it">${I(IC.laptop, 15)}<span>edit video shorts theo youtube</span></div>
+        <div class="it" style="border-top:1px solid #EEE;margin-top:6px;height:38px">Choose environment <span style="color:#888">${I(IC.down, 12)}</span></div></div></div>
+    <div class="col c1" style="left:740px;display:none"></div>
+    <div class="col c2" style="left:740px;display:none"></div>
+    <div class="col c3" style="left:740px;display:none"></div>
+    <div class="inp ci" style="left:740px">${I(IC.plus, 18, '#555')}<div class="tx"></div><span style="color:#444">${I(IC.mic, 17)}</span><span class="snd">${I(IC.up, 16)}</span></div>
+    <div class="under fl" style="left:756px"><span class="envc fl" style="gap:18px"><span class="chip ce fl">${I(IC.laptop, 16)}<span>This computer</span></span><span class="chip cf fl">${I(IC.folder, 16)}<span class="cft">Select folder</span></span></span><span>Auto</span><span style="margin-left:auto">Opus 5.5 <span class="f" style="color:#8A8A8A">High</span></span>${SPIN}</div>
+    <div class="menu me" style="left:744px;bottom:38px;width:300px;display:none">
+      <div class="it e0">${I(IC.laptop, 16)}<span>This computer</span><span style="margin-left:auto;color:#D97757">${I(IC.check, 15)}</span></div>
+      <div class="it">${I(IC.cloud, 16)}<span>Cloud</span></div><div class="it">${I(IC.server, 16)}<span>SSH</span></div></div>
+    <div class="menu mf" style="left:870px;bottom:38px;width:320px;display:none">
+      <div class="it" style="font-size:12.5px;color:#7A7A7A;height:30px">Recent</div>
+      ${['Content Agent', 'edit video shorts theo youtube', 'ai prompt to create proposal'].map(s => `<div class="it">${I(IC.folder, 16)}<span>${s}</span></div>`).join('')}
+      <div style="position:relative;height:1px;background:#EEE;margin:5px 0"></div><div class="it of">${I(IC.folder, 16)}<span>Open folder…</span></div></div>
+  </div>
+  <div class="pane pn" style="display:none">
+    <div class="fl" style="left:0;right:0;top:0;height:44px;border-bottom:1px solid #EEE;padding:0 12px;gap:8px;font-size:13.5px;color:#333">
+      <span class="fl" style="height:30px;padding:0 10px;gap:8px;border-radius:8px;background:#F2F2F2">${I(IC.file, 14)}<span class="pnt">review/index.html</span>${I(IC.x, 13)}</span>
+      <span style="margin-left:auto;display:flex;gap:16px;color:#444">${I(IC.search, 17)}${I(IC.dots, 17)}${I(IC.expand, 16)}${I(IC.x, 17)}</span></div>
+    <img class="pg1" src="img/sim/tv-review-intro.jpg" style="left:0;top:44px;width:984px">
+    <div class="pg2" style="left:0;right:0;top:44px;bottom:0;background:#0f0f0f;display:none"><img src="img/sim/tv-final.jpg" style="left:24px;top:80px;width:936px;border-radius:6px">
+      <div style="left:24px;right:24px;top:620px;height:5px;border-radius:3px;background:#444"><i class="vp" style="left:0;top:0;bottom:0;width:36%;background:#D97757;border-radius:3px"></i></div>
+      <div style="left:24px;top:640px;color:#ccc;font:14px Mono">Topview - trai nghiem lam video AI_final.mp4 · 7:10 / 19:57</div></div></div>
+ </div></div>
+ <div class="win ch" id="ch" style="left:0;top:0;width:1536px;height:826px;display:none">
+  <div style="left:0;right:0;top:0;height:40px;background:#DFE3EB"><div class="row" style="left:8px;top:6px;height:34px;width:260px;padding:0 12px;gap:8px;background:#fff;border-radius:10px 10px 0 0;font-size:13px">${I(IC.file, 14)}<span class="f">thanhthuduc99/youtube-ai-…</span></div>${WC}</div>
+  <div class="row" style="left:0;right:0;top:40px;height:44px;background:#fff;padding:0 12px;gap:12px;border-bottom:1px solid #e5e5e5;color:#5f6368">← → ⟳
+    <div class="f" style="flex:1;height:32px;border-radius:16px;background:#F1F3F4;line-height:32px;padding:0 16px;font-size:14px;color:#202124">github.com/thanhthuduc99/youtube-ai-editor</div></div>
+  <div style="left:0;right:0;top:84px;bottom:0;overflow:hidden"><img src="img/web-01-github.png" style="left:0;top:0;width:1536px"></div>
+  <div class="menu gd" style="left:760px;top:375px;width:420px;display:none;padding:14px">
+    <div class="f" style="font-weight:600;font-size:14px;margin-bottom:10px">Clone · HTTPS</div>
+    <div class="row f" style="gap:8px"><div class="f" style="flex:1;height:32px;border:1px solid #d0d7de;border-radius:6px;font:12.5px Mono;line-height:30px;padding:0 10px;white-space:nowrap;overflow:hidden">${GH}.git</div>
+      <span class="f gc" style="width:32px;height:32px;border:1px solid #d0d7de;border-radius:6px;display:grid;place-items:center">${I(IC.copy, 15)}</span></div></div>
+  <div class="gt" style="left:640px;top:720px;padding:10px 18px;border-radius:8px;background:#1F2328;color:#fff;font-size:14px;display:none">${I(IC.check, 14, '#3fb950')} Copied!</div>
+ </div>
+
+ <div class="win ex" id="ex" style="left:150px;top:70px;width:1150px;height:640px;border-radius:10px;border:1px solid #cfcfcf;display:none">
+  <div style="left:0;right:0;top:0;height:40px;background:#F3F3F3"><div class="row" style="left:12px;top:8px;gap:8px;font-size:13px">${I(IC.folder, 16, '#E8B44C')}<span class="f">Meetings</span></div>${WC}</div>
+  <div class="row" style="left:0;right:0;top:40px;height:46px;background:#F9F9F9;border-bottom:1px solid #e5e5e5;padding:0 12px;gap:10px;font-size:13px;color:#555">← → ↑
+    <div class="f" style="flex:1;height:30px;border:1px solid #ddd;border-radius:4px;background:#fff;line-height:28px;padding:0 10px;color:#222">This PC  ›  Local Disk (C:)  ›  work  ›  youtube  ›  raw</div></div>
+  <div style="left:0;top:86px;bottom:0;width:200px;border-right:1px solid #eee;background:#fff;padding:10px;font-size:13px;line-height:30px;color:#333">${['Home', 'Gallery', 'Desktop', 'Downloads', 'Documents', 'This PC', 'Data (D:)'].map((s, j) => `<div class="f" style="padding-left:10px">${s}</div>`).join('')}</div>
+  <div style="left:200px;right:0;top:86px;bottom:0;background:#fff;font-size:13px">
+   <div class="row" style="left:0;right:0;top:0;height:32px;color:#666;border-bottom:1px solid #eee"><span class="f" style="width:360px;padding-left:40px">Name</span><span class="f" style="width:170px">Date modified</span><span class="f" style="width:150px">Type</span><span class="f">Size</span></div>
+   ${[['2026-10-28 09-36-52.mp4', '28/10/2026 09:40', '42,868 KB'], ['upwork 28 10.mp4', '28/10/2026 09:05', '38,556 KB'], ['Youtube AI system.mp4', '28/10/2026 09:13', '28,920 KB'],
+      ['youtube ai phan 1.mp4', '28/10/2026 09:30', '202,001 KB'], ['youtube ai phan 2.mp4', '28/10/2026 09:42', '75,480 KB'], ['video portfolio.mp4', '13/10/2026 11:03', '17,350 KB'], ['website up port.mp4', '13/10/2026 12:21', '67,716 KB']]
+     .map(([n, d, s], j) => `<div class="row fr fr${j}" style="left:4px;right:4px;top:${36 + j*34}px;height:32px;border-radius:4px"><span class="f" style="width:356px;padding-left:12px;display:flex;align-items:center;gap:10px">${I(IC.video, 16, '#7A5AF8')}${n}</span><span class="f" style="width:170px;color:#555">${d}</span><span class="f" style="width:150px;color:#555">MP4 Video</span><span class="f" style="color:#555">${s}</span></div>`).join('')}
+   <div class="menu cm" style="left:420px;top:150px;width:260px;display:none">
+     ${['Open', 'Play', 'Share', 'Copy as path'].map((s, j) => `<div class="it cm${j}">${j == 3 ? I(IC.copy, 15) : ''}<span class="f">${s}</span>${j == 3 ? '<span class="f" style="margin-left:auto;color:#888;font-size:12px">Ctrl+Shift+C</span>' : ''}</div>`).join('')}</div></div>
+ </div>
+
+ <div class="win dp" id="dp" style="left:330px;top:120px;width:880px;height:540px;border-radius:10px;border:1px solid #cfcfcf;display:none;z-index:20">
+  <div style="left:0;right:0;top:0;height:40px;background:#F3F3F3;font-size:13px;line-height:40px;padding-left:14px">Select folder</div>
+  <div class="row" style="left:0;right:0;top:40px;height:44px;background:#F9F9F9;border-bottom:1px solid #e5e5e5;padding:0 12px;font-size:13px">
+    <div class="f" style="flex:1;height:30px;border:1px solid #ddd;border-radius:4px;background:#fff;line-height:28px;padding:0 10px">Local Disk (C:)  ›  work  ›  projects</div></div>
+  ${['edit video shorts theo youtube', 'edit whole youtube video', 'showroom 3d', 'website-3d', 'vox-style-2'].map((s, j) => `<div class="row dr dr${j}" style="left:14px;right:14px;top:${96 + j*36}px;height:34px;gap:10px;padding:0 10px;border-radius:4px;font-size:14px">${I(IC.folder, 17, '#E8B44C')}<span class="f">${s}</span></div>`).join('')}
+  <div class="row" style="left:14px;right:14px;bottom:16px;height:36px;gap:10px;font-size:13px"><span class="f">Folder:</span><div class="f dpn" style="flex:1;height:30px;border:1px solid #ccc;border-radius:4px;line-height:28px;padding:0 8px"></div>
+    <span class="f dsel" style="height:32px;padding:0 18px;line-height:32px;border-radius:4px;background:#0067C0;color:#fff">Select Folder</span><span class="f" style="height:32px;padding:0 18px;line-height:32px;border-radius:4px;border:1px solid #ccc">Cancel</span></div>
+ </div>
+ <svg class="cur" id="cur" viewBox="0 0 24 30" style="left:760px;top:520px"><path d="M2 2v22l6-5.5 4 9 4-1.8-4-8.7h8z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+ <div class="rip" id="rip"></div>`;
+
+// transcript content per session (hidden blocks, revealed by the timeline)
+$('.c1').innerHTML = `<div class="ub u1" style="display:none">${GH} setup cho tôi</div>` +
+  msg('a1', 'Mình sẽ clone repo, chép 2 skill <b>youtube</b> và <b>edit-long</b> vào máy, rồi kiểm tra các công cụ cần dùng.') +
+  tool('t1', `Ran git clone ${GH}`, "Cloning into 'youtube-ai-editor'... done.") + tool('t2', 'Ran node --version', 'v22.14.0') + tool('t3', 'Ran python --version', 'Python 3.12.10') +
+  tool('t4', 'Ran pip install mediapipe faster-whisper opencv-python', 'Requirement already satisfied: mediapipe 1.1.1, faster-whisper 1.2.1') + tool('t5', 'Ran ffmpeg -version', 'ffmpeg version 8.1 (đã có, dùng lại)') +
+  tool('t6', 'Ran cp -r skills/youtube skills/edit-long ~/.claude/skills/', '') +
+  msg('a2', 'Cài xong 2 skill. Muốn đăng YouTube và làm thumbnail thì cần thêm:<br>• <span class="f m1">YouTube Data API (OAuth) để đăng bài</span><br>• <span class="f m2">Codex CLI đăng nhập ChatGPT để tạo thumbnail</span><br><span class="f m3">Nếu chỉ edit video dài thì không cần 2 thứ này.</span>');
+$('.c2').innerHTML = `<div class="ub u2" style="display:none">${esc(PATHS)}\nedit video youtube này cho tôi. dùng skill youtube.</div>` +
+  tool('r1', 'Launching skill: youtube', '', 'bolt') + msg('b1', 'Mình dựng project, ghép 2 phần theo thứ tự rồi cắt vấp.') +
+  tool('r2', 'Ran ffmpeg -f concat … cut/work/raw.mp4', 'raw 23:53') + tool('r3', 'Ran python cut/scripts/analyze.py cut/work/raw.mp4', '550 câu, 16 lệnh "cắt cắt"') +
+  tool('r4', 'Agent · Decide stumble cuts', 'bỏ 105 đoạn vấp → cut.mp4 15:37', 'bolt') + tool('r5', 'Ran python scripts/build.py', '71 overlays, 156 SFX cues') +
+  tool('r6', 'Ran python thumbnail/scripts/gen_thumb.py t1 t2 t3', '3 thumbnail → thumbnail/out/review.jpg') + tool('r7', 'Wrote work/description.txt', 'description + 12 mốc timestamp', 'file') +
+  msg('b2', 'Xong bước duyệt. Bản cắt <b>15:37</b>, ảnh mẫu B-roll ở <a>review/index.html</a>, 3 thumbnail:<br><img class="f" src="img/sim/yt-thumb-t1.jpg" style="width:300px;border-radius:8px;margin-top:8px">');
+$('.c3').innerHTML = `<div class="ub u3">${esc(TVP).replace('&lt;hl1>', '<span class="f h1">').replace('&lt;/hl1>', '</span>').replace('&lt;hl2>', '<span class="f h2">').replace('&lt;/hl2>', '</span>')}</div>` +
+  msg('d1', 'Xong 9 ảnh mẫu, mỗi ảnh là overlay đặt lên đúng khung hình gốc. Mở <a class="f rl">review/index.html</a> để duyệt.') +
+  `<div class="ub u4" style="display:none">${OV}</div>` + tool('q1', 'Edited scripts/talking.py, work/make_plan.py', 'ov-003: th-showcase3, 3 video chạy cùng 1 khung', 'file') +
+  tool('q2', 'Ran python scripts/preview.py ov-003', 'ảnh mẫu mới → review/index.html') +
+  `<div class="qa" style="display:none;position:relative;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff">
+    <div class="f" style="font-weight:600;margin-bottom:10px">Chọn thumbnail nào cho video?</div>
+    <div class="row f" style="gap:10px">${['t1', 't2', 't3'].map(n => `<div class="f qo qo-${n}" style="width:170px;border:2px solid var(--line);border-radius:10px;padding:6px;font-size:13px"><img class="f" src="img/sim/tv-${n}.jpg" style="width:154px;border-radius:6px"><div class="f" style="margin-top:4px;font-weight:600">${n}</div></div>`).join('')}</div></div>` +
+  `<div class="ub u5" style="display:none">gắn link topview bên dưới description</div>` + tool('w1', 'Ran python work/update_description.py 6byH5JyDKc8 work/description.txt', 'Đã cập nhật description trên YouTube') +
+  `<div class="ub u6" style="display:none">duyệt, chọn t2.</div>` + tool('w2', 'Ran python scripts/render_overlays.py && python scripts/composite.py', 'renders/final.mp4 · 19:57 · QA đạt') +
+  tool('w3', 'Ran python work/upload_youtube.py … --privacy private', 'Đã up PRIVATE: youtu.be/6byH5JyDKc8') + msg('d2', 'Video đã lên YouTube ở chế độ <b>private</b>. Bạn xem lại rồi tự bật công khai trong Studio.');
+$('.ci .tx').innerHTML = `<span class="f ph ph0">Describe a task or ask a question</span><span class="f ph ph1" style="display:none">Type / for commands</span><span class="f p1" style="display:none">${GH}</span>${chars(' setup cho tôi', 'k1')}<span class="f p2" style="display:none;white-space:pre-wrap;color:#3D3D3D">${esc(PATHS)}\n</span>${chars('edit video youtube này cho tôi.', 'k2')}${chars(' dùng skill youtube.', 'k3')}${chars('sửa style b-roll, animation cho hợp với kênh của tôi', 'k4')}${chars(OV, 'k5')}${chars('gắn link topview bên dưới description', 'k6')}${chars('duyệt, chọn t2.', 'k7')}`;
+
+// ---------------- face: per-clip framing like the demo page ----------------
+const FACE = [994, 587, 476];
+function card(cx, cy, w, h) { const [fx, fy, fh] = FACE, s = h*.78/(fh*1.45);
+  return {box: {left: cx - w/2, top: cy - h/2, width: w, height: h, borderRadius: Math.round(Math.min(w, h)*.3)}, vid: {x: w/2 - fx*s, y: h/2 - (fy - .12*fh)*s, scale: s}}; }
+const FULL = {box: {left: 0, top: 0, width: 1920, height: 1080, borderRadius: 0}, vid: {x: 0, y: 0, scale: 1}};
+const BR = card(1772, 932, 236, 252), BL = card(150, 932, 236, 252);
+
+// ---------------- timeline ----------------
+const tl = gsap.timeline({paused: true});
+const at = t => C(t);
+const show = (sel, t, d = .25) => tl.fromTo(sel, {display: 'none', opacity: 0, y: 8}, {display: 'block', opacity: 1, y: 0, duration: d, immediateRender: false}, at(t));
+const showF = (sel, t, disp = 'flex') => tl.fromTo(sel, {display: 'none', opacity: 0, y: 8}, {display: disp, opacity: 1, y: 0, duration: .25, immediateRender: false}, at(t));
+const hide = (sel, t) => tl.set(sel, {display: 'none'}, at(t));
+const move = (to, t, d = .55) => { tl.to('#face', {...to.box, duration: d, ease: 'power3.inOut'}, at(t)); tl.to('#v', {...to.vid, duration: d, ease: 'power3.inOut'}, at(t));
+  tl.to('#face', {filter: 'blur(16px)', duration: d*.45, ease: 'power2.in'}, at(t)); tl.to('#face', {filter: 'blur(0px)', duration: d*.55, ease: 'power2.out'}, at(t) + d*.45); };
+const go = (x, y, t, d = .55) => tl.to('#cur', {left: x, top: y, duration: d, ease: 'power2.inOut'}, at(t) - d);   // arrives at t
+const click = t => { tl.fromTo('#rip', {opacity: 1, scale: .4}, {opacity: 0, scale: 1.6, duration: .45, ease: 'power2.out', immediateRender: false}, at(t));
+  tl.set('#rip', {left: () => parseFloat($('#cur').style.left), top: () => parseFloat($('#cur').style.top)}, at(t)); };
+const clamp = (a, lo, hi) => Math.min(hi, Math.max(lo, a));
+const cam = (t, z, x, y, d = .8) => tl.to('#cam', {scale: z, x: clamp(960 - x*1.25*z, 1920 - 1920*z, 0), y: clamp(540 - y*1.25*z, 1080 - 1080*z, 0), duration: d, ease: 'power2.inOut'}, at(t));
+const camOut = (t, d = .8) => tl.to('#cam', {scale: 1, x: 0, y: 0, duration: d, ease: 'power2.inOut'}, at(t));
+const type = (sel, t0, t1) => { const ks = $$(sel); ks.forEach((k, j) => tl.set(k, {display: 'inline'}, at(t0) + j*(at(t1) - at(t0))/ks.length)); };
+const front = (id, t) => { ['#cl', '#ch', '#ex'].forEach(w => tl.set(w, {zIndex: w == id ? 10 : 1}, at(t))); };
+const cap = (text, t, t2) => { tl.set('#tag', {innerHTML: text}, at(t)); tl.to('#tag', {opacity: 1, duration: .2}, at(t)); tl.to('#tag', {opacity: 0, duration: .2}, at(t2)); };
+const STEPS = [];
+const step = (t, name) => STEPS.push([t, name]);
+// initial state
+tl.set('#face', FULL.box, 0); tl.set('#v', FULL.vid, 0); tl.set($$('.k1,.k2,.k3,.k4,.k5,.k6,.k7'), {display: 'none'}, 0);
+tl.set('#cam', {scale: 1, x: 0, y: 0, transformOrigin: '0 0'}, 0);
+$$('.c1 > *, .c2 > *').forEach(e => tl.set(e, {display: 'none'}, 0));
+
+// Claude window coords are physical px of the real 1920x1080 screenshot -> logical screen px * .8
+const U3Y = 770, LINK = [1266, 916], QAY = 830, QA1 = [425, 847], QA2 = [615, 847];   // measured with sim_check.py --measure
+const goP = (x, y, t, d) => go(x*.8, y*.8, t, d), camP = (t, z, x, y, d) => cam(t, z, x*.8, y*.8, d);
+const TB = {claude: [910, 845], chrome: [805, 845], explorer: [700, 845]};
+const title = (t, text, fresh) => { tl.set('.htxt', {innerHTML: fresh ? text : `${text} ${I(IC.down, 13)}`, color: fresh ? '#555' : '#1F1F1F'}, at(t)); tl.set('.wn', {opacity: fresh ? 1 : 0}, at(t)); };
+const typing = t => { tl.set('.ph0, .ph1', {display: 'none'}, at(t)); tl.set('.snd', {display: 'grid'}, at(t)); tl.set('.ci', {borderColor: '#B9B9B9'}, at(t)); };
+const sent = (t, ph = '.ph1') => { tl.set('.snd', {display: 'none'}, at(t)); tl.set(ph, {display: 'inline'}, at(t)); tl.set('.ci', {borderColor: '#D5D5D5'}, at(t)); };
+const sess = (sel, t, top, on) => tl.set(sel, {display: 'block', top, backgroundColor: on ? '#E1E1E1' : 'rgba(0,0,0,0)'}, at(t));
+let IX = 1000, SX = 1432;   // input click x and send button x (physical); after the review pane opens: 560 / 868
+const IY = 968;
+
+// 1. open Claude desktop
+step(629.4, 'Mở Claude desktop'); move(BR, 631.9); go(...TB.claude, 633.2); click(633.3);
+ tl.fromTo('#cl', {opacity: 0, scale: .94}, {opacity: 1, scale: 1, duration: .3, transformOrigin: '50% 100%'}, at(633.4));
+// 2. plan Pro/Max
+step(636.9, 'Gói Pro / Max'); goP(80, 1008, 637.2); click(637.3); show('.um', 637.4); camP(637.6, 1.6, 200, 860);
+tl.to('.pl', {backgroundColor: '#FBEDE7', duration: .2}, at(638.6)); tl.to('.pl', {backgroundColor: '#F6DDD1', duration: .2, yoyo: true, repeat: 3}, at(640.6));
+hide('.um', 642.0); camOut(641.9);
+// 3. Code tab, not Home
+step(642.6, 'Vào tab Code'); goP(205, 62, 642.8); click(643.0);
+tl.set('.sg1', {backgroundColor: '#fff', color: '#1F1F1F', boxShadow: '0 0 0 1px #E3E3E3'}, at(643.0)); tl.set('.sg0', {backgroundColor: 'rgba(0,0,0,0)', color: '#555', boxShadow: 'none'}, at(643.0)); tl.to('.home', {opacity: 0, duration: .2}, at(643.0)); tl.to('.code', {opacity: 1, duration: .2}, at(643.1));
+tl.to('.chat-side', {opacity: 0, duration: .2}, at(643.0)); tl.to('.code-side', {opacity: 1, duration: .2}, at(643.1)); title(643.1, 'New session', true);
+goP(78, 62, 645.4); show('.tip', 645.6); hide('.tip', 652.4); goP(205, 62, 653.0);
+// 4. This computer + folder (the chips sit under the chat box)
+step(656.6, 'Chọn This computer'); goP(810, 1012, 657.3); click(657.4); show('.me', 657.5); camP(657.7, 1.5, 1000, 900);
+tl.set('.e0', {backgroundColor: '#F2F2F2'}, at(659.3)); goP(840, 892, 659.6); click(660.2); hide('.me', 660.4);
+step(661.9, 'Chọn folder'); goP(932, 1012, 665.5); click(669.8); show('.mf', 669.9); goP(930, 968, 671.4); tl.set('.of', {backgroundColor: '#F2F2F2'}, at(671.2)); click(671.6); hide('.mf', 671.8);
+camOut(671.8, .5); show('#dp', 672.0); go(560, 270, 675.2); click(675.6); tl.set('.dr1', {backgroundColor: '#CCE4F7'}, at(675.6)); tl.set('.dpn', {innerHTML: 'edit whole youtube video'}, at(675.6));
+go(1035, 626, 676.6); click(676.8); hide('#dp', 677.0); tl.set('.cft', {innerHTML: 'edit whole youtube video'}, at(677.0));
+tl.fromTo('.cf', {backgroundColor: '#EEEBFF'}, {backgroundColor: 'rgba(255,255,255,0)', duration: 1.5, immediateRender: false}, at(677.4)); camP(677.4, 1.45, 1000, 920); camOut(681.4);
+// 5. GitHub: copy repo link
+step(682.2, 'Copy link GitHub'); go(...TB.chrome, 682.6); click(682.7); tl.set('#ch', {display: 'block'}, at(682.8)); front('#ch', 682.8);
+go(994, 354, 686.8); click(687.9); show('.gd', 688.0); cam(688.0, 1.4, 960, 400); go(1150, 427, 688.6, .4); click(688.8); show('.gt', 689.0); hide('.gt', 690.6); hide('.gd', 690.8); camOut(690.8, .5);
+// 6. paste + "setup cho tôi"
+step(691.5, 'Dán link, gõ "setup cho tôi"'); go(...TB.claude, 691.8); click(691.9); front('#cl', 692.0); hide('#ch', 692.0);
+goP(IX, IY, 693.4); click(693.5); typing(693.9); tl.set('.p1', {display: 'inline'}, at(693.9)); camP(694.0, 1.5, 1100, 930);
+type('.k1', 702.6, 704.1); goP(SX, IY, 704.4); click(704.6);
+tl.set($$('.p1,.k1'), {display: 'none'}, at(704.7)); sent(704.7); camOut(704.7, .6);
+hide('.newv', 704.7); hide('.envc', 704.7); tl.set('.c1', {display: 'flex'}, at(704.7)); title(704.7, 'Setup youtube-ai-editor'); sess('.ss1', 704.7, 375, true); tl.set('.ss2', {top: 409}, at(704.7));
+show('.u1', 704.8); show('.a1', 705.3); show('.t1', 705.8); show('.t2', 707.9); show('.t3', 709.1); show('.t4', 710.0); show('.t5', 713.6); show('.t6', 715.0);
+camP(706.5, 1.35, 1100, 560, 1); show('.a2', 716.2);
+tl.fromTo('.c1 .m1', {backgroundColor: 'rgba(217,119,87,0)'}, {backgroundColor: 'rgba(217,119,87,.22)', duration: .3, immediateRender: false}, at(720.7));
+tl.fromTo('.c1 .m2', {backgroundColor: 'rgba(217,119,87,0)'}, {backgroundColor: 'rgba(217,119,87,.22)', duration: .3, immediateRender: false}, at(723.9));
+tl.fromTo('.c1 .m3', {backgroundColor: 'rgba(74,58,224,0)'}, {backgroundColor: 'rgba(74,58,224,.14)', duration: .3, immediateRender: false}, at(728.4)); camOut(731.5);
+// 7. tweak the style (typed, not sent)
+step(737.0, 'Sửa style theo ý bạn'); goP(IX, IY, 737.4); click(737.5); camP(737.6, 1.5, 1100, 930); typing(738.9); type('.k4', 739.0, 743.4);
+tl.set($$('.k4'), {display: 'none'}, at(746.6)); sent(746.6); camOut(746.6);
+// 8. new session from the project's "+", Explorer, copy as path
+step(756.0, 'Phiên mới'); goP(253, 358, 756.4); click(756.6); tl.set('.c1', {display: 'none'}, at(756.7)); tl.set('.newv', {display: 'block'}, at(756.7)); tl.set('.envc', {display: 'flex'}, at(756.7));
+tl.set('.ph1', {display: 'none'}, at(756.7)); tl.set('.ph0', {display: 'inline'}, at(756.7)); tl.set('.ss1', {backgroundColor: 'rgba(0,0,0,0)'}, at(756.7)); title(756.7, 'New session', true);
+step(763.2, 'Copy as path 2 file'); go(...TB.explorer, 763.6); click(763.7); tl.set('#ex', {display: 'block'}, at(763.8)); front('#ex', 763.8);
+cam(764.2, 1.35, 640, 330); go(480, 271, 766.6); tl.set('.fr2', {backgroundColor: '#E5F1FB'}, at(766.6));
+click(772.1); tl.set('.fr2', {backgroundColor: '#CCE4F7'}, at(772.1)); go(480, 305, 772.5, .3); click(772.6); tl.set('.fr3', {backgroundColor: '#CCE4F7'}, at(772.6));
+click(773.2); showF('.cm', 773.3, 'block'); go(880, 438, 774.1); tl.set('.cm3', {backgroundColor: '#F0EEE6'}, at(773.9)); click(774.3); hide('.cm', 774.5);
+// 9. paste + prompt + send
+step(776.4, 'Dán đường dẫn + prompt'); camOut(776.2, .4); go(...TB.claude, 776.7); click(776.8); front('#cl', 776.9); hide('#ex', 776.9);
+goP(IX, IY, 777.1); click(777.2); typing(777.4); tl.set('.p2', {display: 'inline'}, at(777.4)); camP(777.6, 1.5, 1100, 900); type('.k2', 779.4, 783.3); type('.k3', 785.9, 786.8);
+goP(SX, IY, 787.3); click(787.5); tl.set($$('.p2,.k2,.k3'), {display: 'none'}, at(787.6)); sent(787.6); camOut(787.6, .6);
+hide('.newv', 787.6); hide('.envc', 787.6); tl.set('.c2', {display: 'flex'}, at(787.6)); title(787.6, 'YouTube video editing');
+sess('.ss0', 787.6, 375, true); tl.set('.ss1', {top: 409}, at(787.6)); tl.set('.ss2', {top: 443}, at(787.6));
+show('.u2', 787.7); show('.r1', 788.2); show('.b1', 789.6); show('.r2', 790.1); show('.r3', 790.8); show('.r4', 791.5); show('.r5', 792.9); show('.r6', 794.0); show('.r7', 795.2);
+camP(790.0, 1.3, 1100, 560, 1); show('.b2', 797.8); camOut(803.0);
+// 10. Topview example
+step(811.4, 'Mở phiên Topview'); goP(130, 460, 813.6); tl.set('.ss2', {backgroundColor: '#ECECEC'}, at(814.6)); click(815.3);
+tl.set('.ss2', {backgroundColor: '#E1E1E1'}, at(815.3)); tl.set('.ss0', {backgroundColor: 'rgba(0,0,0,0)'}, at(815.3));
+tl.set('.c2', {display: 'none'}, at(815.4)); tl.set('.c3', {display: 'flex'}, at(815.4)); title(815.4, 'Top View video editing và upload');
+$$('.c3 > *:not(.u3)').forEach(e => tl.set(e, {display: 'none'}, 0));
+camP(817.6, 1.45, 1250, U3Y); tl.fromTo('.h1', {backgroundColor: 'rgba(217,119,87,0)'}, {backgroundColor: 'rgba(217,119,87,.25)', duration: .4, immediateRender: false}, at(821.4));
+tl.fromTo('.h2', {backgroundColor: 'rgba(217,119,87,0)'}, {backgroundColor: 'rgba(217,119,87,.25)', duration: .4, immediateRender: false}, at(836.2)); camOut(841.5);
+step(842.3, 'Duyệt ảnh mẫu'); show('.d1', 842.6); goP(...LINK, 846.3); click(846.6); tl.set('.pn', {display: 'block'}, at(846.8)); tl.fromTo('.pn', {x: 984}, {x: 0, duration: .4, immediateRender: false}, at(846.8));
+tl.to('.c3, .ci', {left: 320, width: 576, duration: .4}, at(846.8)); tl.to('.under', {left: 336, width: 544, duration: .4}, at(846.8)); move(BL, 846.9, .5); camP(847.4, 1.35, 1430, 400, .8);
+IX = 560; SX = 868;
+step(853.3, 'Sửa ov 003,004,005'); camOut(853.6, .6); goP(IX, IY, 854.6); click(854.8); typing(854.9); type('.k5', 855.0, 861.8); camP(855.2, 1.4, 600, 880);
+goP(SX, IY, 862.2); click(862.4); tl.set($$('.k5'), {display: 'none'}, at(862.5)); sent(862.5); camOut(862.5, .5);
+show('.u4', 862.6); show('.q1', 863.6); show('.q2', 865.0); tl.fromTo('.pg1', {opacity: .4}, {opacity: 1, duration: .5, immediateRender: false}, at(865.4));
+step(869.0, 'Claude tự hỏi chọn thumbnail'); show('.qa', 871.7); camP(872.0, 1.4, 600, QAY); tl.fromTo('.qa', {boxShadow: '0 0 0 0 rgba(217,119,87,0)'}, {boxShadow: '0 0 0 6px rgba(217,119,87,.25)', duration: .4, yoyo: true, repeat: 3, immediateRender: false}, at(876.6));
+goP(QA1[0], QA1[1], 879.0); goP(QA2[0], QA2[1], 881.4); camOut(884.0);
+step(901.3, 'Xem bản final'); tl.set('.pnt', {innerHTML: 'renders/final.mp4'}, at(902.6)); tl.set('.pg1', {display: 'none'}, at(902.6)); tl.set('.pg2', {display: 'block'}, at(902.6));
+tl.fromTo('.vp', {width: '36%'}, {width: '44%', duration: 12, ease: 'none', immediateRender: false}, at(902.7));
+step(903.8, 'Gắn link Topview vào description'); goP(IX, IY, 905.0); click(905.1); typing(905.2); type('.k6', 905.3, 907.0); camP(905.3, 1.4, 600, 880); goP(SX, IY, 907.2, .3); click(907.4);
+tl.set($$('.k6'), {display: 'none'}, at(907.5)); sent(907.5); camOut(907.5, .5); show('.u5', 907.6); show('.w1', 908.6);
+step(915.1, 'Duyệt, chọn t2 → đăng private'); goP(IX, IY, 916.6); click(916.7); typing(916.8); type('.k7', 916.9, 917.8); goP(SX, IY, 918.0, .3); click(918.2); tl.set($$('.k7'), {display: 'none'}, at(918.3)); sent(918.3);
+show('.u6', 918.4); tl.to('.qo-t2', {borderColor: '#D97757', duration: .2}, at(918.4)); show('.w2', 918.8); show('.w3', 921.0); show('.d2', 922.8); camP(921.2, 1.35, 600, 600); camOut(926.6);
+step(927.5, 'Về lại mặt'); move(FULL, 928.0);
+tl.set({}, {}, END - T0);
+
+// ---------------- player ----------------
+const v = $('#v'), btn = $('#btn'), rng = $('#rng'), lab = $('#lab');
+const mm = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2, '0')}`;
+const sh = t => { tl.time(t); rng.value = t; lab.textContent = `${mm(t + T0)} / 15:37`; };
+const fit = () => $('#st').style.transform = `scale(${$('#fr').clientWidth/1920})`;
+addEventListener('resize', fit); fit(); sh(0);
+const toggle = () => { if (v.paused) { if (v.currentTime >= END - T0 - .1) v.currentTime = 0; v.play(); btn.textContent = 'Dừng'; btn.classList.add('on'); } else { v.pause(); btn.textContent = 'Phát'; btn.classList.remove('on'); } };
+btn.onclick = toggle; $('#fr').onclick = toggle;
+rng.oninput = () => { v.currentTime = +rng.value; sh(+rng.value); };
+v.addEventListener('ended', () => { btn.textContent = 'Phát'; btn.classList.remove('on'); });
+(function loop() { if (!v.paused) sh(v.currentTime); requestAnimationFrame(loop); })();
+$('#steps').innerHTML = STEPS.map(([t, n]) => `<a data-t="${C(t)}">${mm(t)} ${n}</a>`).join('');
+$$('#steps a').forEach(a => a.onclick = () => { const t = +a.dataset.t; v.currentTime = t; sh(t); });
+</script>
+</body>
+</html>
