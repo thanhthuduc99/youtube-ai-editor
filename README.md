@@ -61,7 +61,7 @@ Công cụ phụ:
 Cách nhanh: dán prompt này vào Claude Code hoặc Codex.
 
 ```text
-Cài 2 skill trong repo https://github.com/thanhthuduc99/youtube-ai-editor:
+Cài 3 skill trong repo https://github.com/thanhthuduc99/youtube-ai-editor:
 1. Clone repo về thư mục tạm.
 2. Chép skills/youtube, skills/edit-long và skills/edit-long-2 vào thư mục skill của mình (Claude Code: ~/.claude/skills/, Codex: ~/.codex/skills/).
 3. Kiểm tra python, ffmpeg, node, rồi cài các package Python trong mục "Cần chuẩn bị gì" của README.
