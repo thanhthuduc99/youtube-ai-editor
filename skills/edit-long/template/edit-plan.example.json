@@ -1,0 +1,15 @@
+{
+  "style": "basic",
+  "layout": {"face": [34, 858, 322, 1022], "clip_crop": [330, 86, 1590, 894]},
+  "sections": [{"n": 1, "title": "Phần đầu", "start": 33.7}],
+  "overlays": [
+    {"type": "broll", "at": 0.0, "dur": 4.2, "clip": {"src": 600, "speed": 3}, "say": "câu hook",
+     "props": {"eyebrow": "DỰ ÁN AI", "label": "Kết quả *giống thật*", "sub": "1 dòng mô tả"}},
+    {"type": "keyword", "at": 27.6, "dur": 4.0, "say": "câu nói", "props": {"text": "Ý chính *nhấn*", "pos": "right"}},
+    {"type": "chapter", "at": 33.7, "dur": 3.2, "say": "câu mở phần",
+     "props": {"n": 1, "total": 4, "title": "Tên *phần*", "meta": ["tool", "số liệu thật"], "parts": ["P1", "P2", "P3", "P4"]}},
+    {"type": "lower-third", "at": 46.2, "dur": 4.0, "say": "câu nhắc tool",
+     "props": {"name": "Three.js", "desc": "mô tả ngắn", "logo": "threedotjs", "pos": "top-right"}}
+  ],
+  "zooms": []
+}

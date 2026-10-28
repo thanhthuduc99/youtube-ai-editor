@@ -1,0 +1,195 @@
+{
+ "style": "basic",
+ "layout": {
+  "face": [
+   740,
+   140,
+   1180,
+   600
+  ]
+ },
+ "sections": [],
+ "zooms": [],
+ "overlays": [
+  {
+   "type": "th-text",
+   "at": 1.52,
+   "dur": 4.4,
+   "props": {
+    "text": "Thử thách *10k đô*",
+    "sub": "trên Upwork",
+    "logo": "upwork",
+    "side": "right"
+   },
+   "say": "video này sẽ kết thúc cho đến khi nào mình đạt được 10k đô ở trên Upwork"
+  },
+  {
+   "type": "th-side",
+   "at": 6.3,
+   "dur": 7.6,
+   "props": {
+    "clip": [
+     "C:/work/youtube/videos/2026/upwork/intro.mp4",
+     0.0,
+     2
+    ],
+    "badge": "Upwork",
+    "text": "Freelancer nhận job *nước ngoài*",
+    "side": "right"
+   },
+   "say": "Upwork là một nền tảng giúp cho những người freelancer có thể tìm được những cái job ở thị trường nước ngoài"
+  },
+  {
+   "type": "th-chips",
+   "at": 14.24,
+   "dur": 4.6,
+   "props": {
+    "items": [
+     "Tìm job",
+     "Gửi proposal",
+     "Làm việc",
+     "Nhận *tiền đô*"
+    ]
+   },
+   "say": "và nhận tiền đô cho những cái công việc đó"
+  },
+  {
+   "type": "th-lower",
+   "at": 19.08,
+   "dur": 4.2,
+   "props": {
+    "name": "Thành Vũ Đức",
+    "role": "AI Automation · *Contentta*"
+   },
+   "say": "thì lý do mình bắt đầu cái thử thách này"
+  },
+  {
+   "type": "th-text",
+   "at": 27.64,
+   "dur": 3.6,
+   "props": {
+    "text": "Mong ước *từ nhỏ*",
+    "sub": "làm việc, nhận lương bằng đô",
+    "side": "left"
+   },
+   "say": "đó là một cái mong ước của mình từ hồi rất là nhỏ rồi"
+  },
+  {
+   "type": "th-wall",
+   "at": 35.76,
+   "dur": 5.6,
+   "props": {
+    "imgs": [
+     "C:/work/youtube/videos/2026/upwork/chatbot upwork final.mp4@2.5",
+     "C:/work/youtube/videos/2026/upwork/chatbot upwork final.mp4@37.0",
+     "C:/work/youtube/videos/2026/upwork/video upwork final.mp4@3.5",
+     "C:/work/youtube/videos/2026/upwork/video upwork final.mp4@24.4",
+     "C:/work/youtube/videos/2026/upwork/video upwork final.mp4@45.3",
+     "C:/work/youtube/videos/2026/upwork/video upwork final.mp4@66.2",
+     "C:/work/youtube/videos/2026/upwork/video upwork final.mp4@73.2",
+     "C:/work/youtube/videos/2026/upwork/website final upwork.mp4@20.3",
+     "C:/work/youtube/videos/2026/upwork/website final upwork.mp4@36.6",
+     "C:/work/youtube/videos/2026/upwork/website final upwork.mp4@77.3",
+     "C:/work/youtube/videos/2026/upwork/website final upwork.mp4@85.5",
+     "C:/work/youtube/videos/2026/upwork/website final upwork.mp4@109.9",
+     "C:/work/youtube/videos/2026/upwork/intro.mp4@41.6",
+     "C:/work/youtube/videos/2026/upwork/intro.mp4@67.2"
+    ],
+    "text": "Dự án cho *khách trong nước*"
+   },
+   "say": "mình làm việc cho những người khách hàng ở trong nước và mình đã có một số cái kinh nghiệm"
+  },
+  {
+   "type": "th-page",
+   "at": 44.12,
+   "dur": 6.2,
+   "props": {
+    "img": "C:/work/youtube/videos/2026/upwork/intro.mp4@3.2",
+    "text": "Mục tiêu *10.000$* trên Upwork"
+   },
+   "say": "cái mục tiêu của cái thử thách lần này đó là cho đến khi nào mà mình đạt được 10.000$ ở trên Upwork"
+  },
+  {
+   "type": "th-blurcard",
+   "at": 54.4,
+   "dur": 6.0,
+   "props": {
+    "text": "Từ *con số 0*",
+    "sub": "bio trống, chưa có đồng nào",
+    "clip": [
+     "C:/work/youtube/videos/2026/upwork/intro.mp4",
+     0.0,
+     3
+    ]
+   },
+   "say": "mình sẽ show toàn bộ những cái quá trình mà mình làm từ một con số 0, từ một cái bio"
+  },
+  {
+   "type": "th-pip",
+   "at": 88.55,
+   "dur": 5.8,
+   "props": {
+    "clip": [
+     "C:/work/youtube/videos/2026/upwork/intro.mp4",
+     28.0,
+     3
+    ]
+   },
+   "say": "mình sẽ quay lại toàn bộ cái quá trình mà mình sẽ làm ở cái nền tảng Upwork này"
+  },
+  {
+   "type": "th-row",
+   "at": 110.05,
+   "dur": 5.4,
+   "props": {
+    "logo": "upwork",
+    "text": "Proposal, cover letter, *tips*",
+    "cards": [
+     {
+      "img": "C:/work/youtube/videos/2026/upwork/intro.mp4@3.2",
+      "label": "Hồ sơ"
+     },
+     {
+      "img": "C:/work/youtube/videos/2026/upwork/intro.mp4@41.6",
+      "label": "Portfolio"
+     },
+     {
+      "img": "C:/work/youtube/videos/2026/upwork/intro.mp4@67.2",
+      "label": "Dự án"
+     }
+    ]
+   },
+   "say": "mình làm proposal như thế nào, mình viết cover letter như thế nào, tips and tricks"
+  },
+  {
+   "type": "th-column",
+   "at": 123.3,
+   "dur": 6.2,
+   "props": {
+    "imgs": [
+     "C:/work/youtube/videos/thumbnail/3d showroom.png",
+     "C:/work/youtube/videos/thumbnail/45688fc8-afa1-4d05-a8dc-05b4dc67a849.png",
+     "C:/work/youtube/videos/thumbnail/740460a1-9b05-481a-a7c1-dbf24474a2fd.png",
+     "C:/work/youtube/videos/thumbnail/b71e801e-1a5b-44cd-b6e6-1631e70581a7.png",
+     "C:/work/youtube/videos/thumbnail/buildchatbot.png",
+     "C:/work/youtube/videos/thumbnail/ChatGPT Image Aug 4, 2026, 11_44_23 PM.png",
+     "C:/work/youtube/videos/thumbnail/claude edit thumb.png",
+     "C:/work/youtube/videos/thumbnail/content.png",
+     "C:/work/youtube/videos/thumbnail/gemini 4.png",
+     "C:/work/youtube/videos/thumbnail/gpt 6 astra.png",
+     "C:/work/youtube/videos/thumbnail/he thnog content.png",
+     "C:/work/youtube/videos/thumbnail/jev new.png",
+     "C:/work/youtube/videos/thumbnail/lightrag.png",
+     "C:/work/youtube/videos/thumbnail/opus 5.5.png",
+     "C:/work/youtube/videos/thumbnail/self host n8n_yout.png",
+     "C:/work/youtube/videos/thumbnail/sonnet vs opus.png",
+     "C:/work/youtube/videos/thumbnail/youtube claude code.png",
+     "C:/work/youtube/videos/thumbnail/channel-thumb.png"
+    ],
+    "text": "Xem hết *series* nhé",
+    "sub": "kênh Thành Vũ Đức"
+   },
+   "say": "Rất mong bạn sẽ xem hết video và có một cái điều gì đó bổ ích từ cái video này"
+  }
+ ]
+}

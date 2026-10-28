@@ -1,0 +1,12 @@
+{
+  "id": "my-video",
+  "name": "Tên video",
+  "style": "basic",
+  "source": "",
+  "language": "vi",
+  "whisper_model": "medium",
+  "fixes": {
+    "Contenta": "Contentta"
+  },
+  "sfx_dir": ""
+}

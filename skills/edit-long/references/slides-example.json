@@ -1,0 +1,554 @@
+{
+ "style": "basic",
+ "layout": {},
+ "sections": [],
+ "zooms": [],
+ "overlays": [
+  {
+   "type": "sl-system",
+   "at": 0.0,
+   "dur": 6,
+   "props": {
+    "title": "Edit YouTube bằng *AI*",
+    "steps": [
+     {
+      "label": "AI cut",
+      "icon": "scissors",
+      "img": "C:/work/youtube/projects/broll-lab-ai-edit/assets/real/sl-cut-timeline.jpg"
+     },
+     {
+      "label": "Tạo components",
+      "icon": "layers",
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-006-hero.jpg"
+     },
+     {
+      "label": "AI edit",
+      "icon": "wand",
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-017-hero.jpg"
+     },
+     {
+      "label": "Render",
+      "icon": "play",
+      "img": "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@600.0",
+      "progress": true
+     }
+    ]
+   },
+   "say": "sl-system"
+  },
+  {
+   "type": "sl-cut",
+   "at": 6.0,
+   "dur": 5,
+   "props": {
+    "title": "*AI cut*",
+    "file": "C:/work/youtube/videos/2026/showroom 3d/showroom 3d.mp4",
+    "a": 37.0,
+    "b": 55.0,
+    "clip_name": "showroom 3d.mp4",
+    "words": [
+     [
+      35.25,
+      39.64,
+      "Và những cái bước mà mình nghĩ là đúng để mà làm những cái showroom như thế này ha"
+     ],
+     [
+      40.29,
+      40.64,
+      "Thì"
+     ],
+     [
+      40.91,
+      41.61,
+      "đầu tiên"
+     ],
+     [
+      42.41,
+      44.51,
+      "Thì đầu tiên mình muốn nói đến đó là cái cách"
+     ],
+     [
+      44.83,
+      47.36,
+      "Bạn sẽ biến những cái bạng vẽ"
+     ],
+     [
+      47.75,
+      48.66,
+      "2D như thế này"
+     ],
+     [
+      48.83,
+      49.91,
+      "thành bạng vẽ 3D"
+     ],
+     [
+      50.44,
+      51.39,
+      "Thì các bạn có thể thấy ở đây"
+     ],
+     [
+      51.57,
+      53.87,
+      "mình lấy một cái bạng vẽ ở trên mạng thôi"
+     ],
+     [
+      54.44,
+      54.93,
+      "Rồi mình"
+     ]
+    ],
+    "cuts": [
+     [
+      39.733,
+      42.3,
+      "câu dở"
+     ],
+     [
+      50.0,
+      50.4,
+      "lặng"
+     ],
+     [
+      53.967,
+      54.4,
+      "lặng"
+     ]
+    ],
+    "caption": "bỏ câu dở, khoảng lặng"
+   },
+   "say": "sl-cut"
+  },
+  {
+   "type": "sl-transcript",
+   "at": 11.0,
+   "dur": 5,
+   "props": {
+    "title": "AI đọc *transcript*",
+    "file": "utterances.txt",
+    "crumb": "work",
+    "project": "showroom-3d-cut",
+    "lines": [
+     [
+      "U012",
+      23.41,
+      25.33,
+      0.19,
+      "để đemo cho khách hẹn"
+     ],
+     [
+      "U013",
+      25.61,
+      28.65,
+      0.28,
+      "để người ta có thể nhìn vô và cảm nhận được quen nhất có thể"
+     ],
+     [
+      "U014",
+      28.83,
+      32.53,
+      0.18,
+      "Thì trong cái video lần này mình sẽ đi qua các bước mà mình đã làm"
+     ],
+     [
+      "U015",
+      32.78,
+      35.03,
+      0.25,
+      "Có những cái bước sai, có những cái bước mà mình tính sửa"
+     ],
+     [
+      "U016",
+      35.25,
+      39.64,
+      0.22,
+      "Và những cái bước mà mình nghĩ là đúng để mà làm những cái showroom như thế này ha"
+     ],
+     [
+      "U017",
+      40.29,
+      40.64,
+      0.65,
+      "Thì"
+     ],
+     [
+      "U018",
+      40.91,
+      41.61,
+      0.27,
+      "đầu tiên"
+     ],
+     [
+      "U019",
+      42.41,
+      44.51,
+      0.8,
+      "Thì đầu tiên mình muốn nói đến đó là cái cách"
+     ],
+     [
+      "U020",
+      44.83,
+      47.36,
+      0.32,
+      "Bạn sẽ biến những cái bạng vẽ"
+     ],
+     [
+      "U021",
+      47.75,
+      48.66,
+      0.39,
+      "2D như thế này"
+     ],
+     [
+      "U022",
+      48.83,
+      49.91,
+      0.17,
+      "thành bạng vẽ 3D"
+     ],
+     [
+      "U023",
+      50.44,
+      51.39,
+      0.53,
+      "Thì các bạn có thể thấy ở đây"
+     ],
+     [
+      "U024",
+      51.57,
+      53.87,
+      0.18,
+      "mình lấy một cái bạng vẽ ở trên mạng thôi"
+     ],
+     [
+      "U025",
+      54.44,
+      54.93,
+      0.57,
+      "Rồi mình"
+     ]
+    ],
+    "first_line": 32,
+    "strike": [
+     "U017",
+     "U018"
+    ],
+    "reason": "U017, U018: mở đầu dở *“Thì đầu tiên”*, nói lại trọn ở U019. Bỏ 2 dòng."
+   },
+   "say": "sl-transcript"
+  },
+  {
+   "type": "sl-stack",
+   "at": 16.0,
+   "dur": 5,
+   "props": {
+    "title": "Tạo *components*",
+    "base": "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@670.01",
+    "layer": "C:/work/youtube/projects/broll-lab-ai-edit/assets/real/ov-020-keyword-alpha.png",
+    "file": "ov-020.html",
+    "code": [
+     "<div class=\"kw card\" id=\"k\">",
+     "  Đổi <em class=\"acc\">6 màu sơn</em> ngay trên web",
+     "</div>",
+     "<script>",
+     "tl.fromTo('#k', {opacity:0, y:18, scale:.97},",
+     "  {opacity:1, y:0, scale:1, duration:.34}, 0);",
+     "tl.to('#k', {opacity:0, duration:.24}, D-.24);",
+     "</script>"
+    ]
+   },
+   "say": "sl-stack"
+  },
+  {
+   "type": "sl-fan",
+   "at": 21.0,
+   "dur": 5,
+   "props": {
+    "title": "Thư viện *components*",
+    "cards": [
+     {
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-006-hero.jpg",
+      "label": "chapter"
+     },
+     {
+      "img": "C:/work/youtube/projects/showroom-3d-advanced/review/frames/ov-003-hero.jpg",
+      "label": "3D"
+     },
+     {
+      "img": "C:/work/youtube/projects/showroom-3d-advanced/review/frames/ov-002-hero.jpg",
+      "label": "so sánh"
+     },
+     {
+      "img": "C:/work/youtube/projects/showroom-3d-advanced/review/frames/ov-036-hero.jpg",
+      "label": "flow"
+     },
+     {
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-001-hero.jpg",
+      "label": "b-roll"
+     }
+    ]
+   },
+   "say": "sl-fan"
+  },
+  {
+   "type": "sl-edit",
+   "at": 26.0,
+   "dur": 5,
+   "props": {
+    "title": "*AI edit*",
+    "file": "edit-plan.json",
+    "project": "showroom-3d-basic",
+    "json": [
+     [
+      "{",
+      -1
+     ],
+     [
+      "  \"overlays\": [",
+      -1
+     ],
+     [
+      "    {\"type\": \"chapter\", \"at\": 33.72,",
+      -1
+     ],
+     [
+      "     \"props\": {\"title\": \"Bản vẽ thành *3D*\"}},",
+      0
+     ],
+     [
+      "    {\"type\": \"keyword\", \"at\": 193.8,",
+      -1
+     ],
+     [
+      "     \"props\": {\"text\": \"Toilet chỉ là *khối hộp*\"}},",
+      1
+     ],
+     [
+      "    {\"type\": \"lower-third\", \"at\": 225.0,",
+      -1
+     ],
+     [
+      "     \"props\": {\"name\": \"Opus 5.5\"}},",
+      2
+     ],
+     [
+      "    {\"type\": \"keyword\", \"at\": 669.41,",
+      -1
+     ],
+     [
+      "     \"props\": {\"text\": \"Đổi *6 màu sơn*…\"}}",
+      3
+     ],
+     [
+      "  ]",
+      -1
+     ],
+     [
+      "}",
+      -1
+     ]
+    ],
+    "duration": 719.5,
+    "base": "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@33.0",
+    "wave_file": "C:/work/youtube/projects/showroom-3d-basic/assets/speech.wav",
+    "strip": [
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@30.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@120.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@210.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@300.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@390.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@480.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@570.0",
+     "C:/work/youtube/videos/2026/showroom 3d/Final 3D.mp4@660.0"
+    ],
+    "blocks": [
+     {
+      "label": "chapter",
+      "at": 33.72,
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-006-hero.jpg",
+      "color": "#7B6CFF"
+     },
+     {
+      "label": "keyword",
+      "at": 193.8,
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-011-hero.jpg",
+      "color": "#E07A5F"
+     },
+     {
+      "label": "lower-third",
+      "at": 225.0,
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-012-hero.jpg",
+      "color": "#3B82F6"
+     },
+     {
+      "label": "keyword",
+      "at": 669.41,
+      "img": "C:/work/youtube/projects/showroom-3d-basic/review/frames/ov-020-hero.jpg",
+      "color": "#E07A5F"
+     }
+    ]
+   },
+   "say": "sl-edit"
+  },
+  {
+   "type": "sl-terminal",
+   "at": 31.0,
+   "dur": 5,
+   "props": {
+    "title": "Claude Code *tự edit*",
+    "cwd": "D:\\…\\projects\\showroom-3d-basic",
+    "prompt": "edit video này theo style chuẩn",
+    "thinking": "Đang đọc transcript…",
+    "steps": [
+     [
+      "tool",
+      "Read(assets/transcript.txt)",
+      "Read 194 lines"
+     ],
+     [
+      "tool",
+      "Write(edit-plan.json)",
+      "Wrote 20 overlays"
+     ],
+     [
+      "tool",
+      "Bash(python scripts/build.py)",
+      "20 overlays, 28 SFX cues -> overlays.json"
+     ],
+     [
+      "tool",
+      "Bash(python scripts/preview.py)",
+      "20 ảnh mẫu -> review/index.html"
+     ],
+     [
+      "say",
+      "Xong ảnh mẫu. Mở *review/index.html* để duyệt.",
+      ""
+     ]
+    ]
+   },
+   "say": "sl-terminal"
+  },
+  {
+   "type": "sl-approve",
+   "at": 36.0,
+   "dur": 5,
+   "props": {
+    "title": "Duyệt *ảnh mẫu* trước",
+    "page": "C:/work/youtube/projects/showroom-3d-advanced/review/index.html",
+    "url": "D:/…/showroom-3d-advanced/review/index.html",
+    "tab": "Duyệt mẫu Showroom 3D",
+    "reply": "duyệt",
+    "done": "Đã duyệt. Bắt đầu render video."
+   },
+   "say": "sl-approve"
+  },
+  {
+   "type": "sl-render",
+   "at": 41.0,
+   "dur": 5,
+   "props": {
+    "title": "*Render*",
+    "name": "final.mp4",
+    "clip": [
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4",
+     596.0
+    ],
+    "frames": [
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@6.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@36.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@136.5",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@200.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@249.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@400.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@583.0",
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@640.0"
+    ],
+    "log": [
+     [
+      "cmd",
+      "python scripts/render_overlays.py"
+     ],
+     [
+      "out",
+      "[1/18] ov-003  191 frames  111s"
+     ],
+     [
+      "out",
+      "[4/18] ov-006   96 frames   71s"
+     ],
+     [
+      "out",
+      "[9/18] ov-011   30 frames   14s"
+     ],
+     [
+      "out",
+      "[18/18] ov-020  30 frames   14s"
+     ],
+     [
+      "cmd",
+      "python scripts/composite.py"
+     ],
+     [
+      "bar",
+      "frame=21586 speed=2.43x"
+     ],
+     [
+      "ok",
+      "renders/final.mp4 · 1920×1080 · 11:59"
+     ]
+    ]
+   },
+   "say": "sl-render"
+  },
+  {
+   "type": "sl-publish",
+   "at": 46.0,
+   "dur": 5,
+   "props": {
+    "title": "Lên *YouTube*",
+    "clip": [
+     "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4",
+     34.0
+    ],
+    "time": "0:34 / 11:59",
+    "now": 1,
+    "progress": 0.047,
+    "search": "Tìm kiếm",
+    "video_title": "Tạo showroom 3D giống thật bằng AI",
+    "channel": "Thành Vũ Đức",
+    "subs": "",
+    "avatar": "C:/work/youtube/projects/broll-lab-ai-edit/assets/real/avatar.jpg",
+    "url": "youtube.com/watch?v=…",
+    "chapters": [
+     [
+      "0:00",
+      "Intro",
+      "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@1.5"
+     ],
+     [
+      "0:33",
+      "Bản vẽ thành 3D",
+      "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@35.0"
+     ],
+     [
+      "2:15",
+      "Ảnh thành 3D",
+      "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@137.0"
+     ],
+     [
+      "4:07",
+      "Căn hộ từ ảnh + bản vẽ",
+      "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@249.0"
+     ],
+     [
+      "9:41",
+      "Showroom 3D",
+      "C:/work/youtube/projects/showroom-3d-basic/renders/final.mp4@583.0"
+     ]
+    ]
+   },
+   "say": "sl-publish"
+  }
+ ]
+}
