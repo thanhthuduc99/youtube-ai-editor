@@ -33,7 +33,9 @@ Cho video chỉ có mặt người nói. Học cách edit của kênh RoboNugget
 - **50 hiệu ứng** của video gốc: mặt thu vào khung bo đổi bên, slide sơ đồ nét mảnh, lưới icon sáng đúng chữ đang nói, chat Claude có chữ gõ dần và tool call, thẻ "Bạn nên biết", logo bật quanh mặt, trang web thật có zoom, công tắc gạt.
 - **Giả lập quay màn hình Claude desktop.** Bạn kể "mở Claude, chọn folder, dán link, prompt..." mà quên quay màn hình: skill dựng lại màn hình Windows, app Claude tab Code (đo theo ảnh chụp thật), Chrome, File Explorer, có con trỏ, gõ phím, zoom theo từng câu nói.
 - **Duyệt trên 1 trang HTML.** Mỗi hiệu ứng chạy trên 1 đoạn thật của video bạn, có tiếng, mở qua `serve.py`.
-- Hướng tới dùng chung với `edit-long` trong 1 video: đoạn mặt người nói dùng hiệu ứng style 2, đoạn quay màn hình và slide dùng edit-long. Builder render `rn-*` cho video final chưa có, hiện style 2 mới ở bước demo duyệt.
+- **Nhịp nhanh như RoboNuggets.** Đo trên video gốc: mặt full khung chỉ 22% thời lượng, mỗi lần khoảng 4.5 giây. Skill giữ luật không để mặt full quá 4-5 giây, video 15 phút ra khoảng 70 cảnh.
+- **Render ra video final.** Chrome tua từng khung của cảnh HTML cùng clip mặt, chụp lại, ghép với bản cắt (`final_plan.py` → `render_scenes.py` → `compose_final.py`). Cảnh nhiều thì chia cho nhiều subagent làm song song.
+- **Thư viện gần 100 cảnh mẫu** trong `references/demo/scenes/`, gồm hiệu ứng edit cho từng công đoạn: timeline cắt vấp, bảng chỉnh da, track B-roll, thẻ view chạy số, đăng đa nền tảng, mục lục video.
 
 ## Cần chuẩn bị gì
 
@@ -107,7 +109,7 @@ Up YouTube cần 3 biến `YOUTUBE_OAUTH_REFRESH_TOKEN`, `YOUTUBE_OAUTH_CLIENT_I
 skills/
   youtube/      cắt vấp (template/cut), thumbnail (template/thumbnail), upload, quy trình 1 điểm dừng
   edit-long/    B-roll + motion graphics: builder overlay, ảnh mẫu, render, QA
-  edit-long-2/  style RoboNuggets màu Contentta: trang demo 50 hiệu ứng, giả lập quay màn hình Claude
+  edit-long-2/  style RoboNuggets màu Contentta: demo duyệt, render final, giả lập quay màn hình Claude
 ```
 
 ## Ghi chú
